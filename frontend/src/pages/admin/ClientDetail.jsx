@@ -4,7 +4,7 @@ import {
   ArrowLeft, ArrowRight, Copy, Check, ExternalLink, Clock, User, Mail, Phone,
   Layers, Link2, AlertCircle, Loader2, ChevronDown, ChevronUp,
   RefreshCw, MessageSquare, CheckCircle2, XCircle, FileText, Download,
-  Send, Upload, Globe, Edit3, Info
+  Send, Upload, Globe, Edit3, Info, Eye
 } from 'lucide-react'
 import AdminLayout from '../../components/AdminLayout.jsx'
 import * as api from '../../services/api.js'
@@ -534,7 +534,7 @@ function FormDataSection({ formData, schema }) {
   )
 }
 
-function RevisionTimeline({ revisions }) {
+function RevisionTimeline({ revisions, formOpenedAt }) {
   const formatDate = (dateStr) => {
     return new Date(dateStr).toLocaleDateString('pt-BR', {
       day: '2-digit', month: '2-digit', year: 'numeric',
@@ -546,51 +546,78 @@ function RevisionTimeline({ revisions }) {
     switch (type) {
       case 'approve': return <CheckCircle2 className="w-4 h-4 text-green-500" />
       case 'request_revision': return <XCircle className="w-4 h-4 text-red-500" />
+      case 'status_change': return <ArrowRight className="w-4 h-4 text-indigo-500" />
+      case 'link_opened': return <Eye className="w-4 h-4 text-emerald-500" />
       default: return <MessageSquare className="w-4 h-4 text-blue-500" />
     }
   }
+
+  const getRevisionLabel = (rev) => {
+    switch (rev.action || rev.type) {
+      case 'approve': return 'Site Aprovado'
+      case 'request_revision': return 'Alteração Solicitada'
+      case 'submit': return 'Formulário preenchido'
+      case 'edit': return 'Formulário atualizado'
+      case 'publish': return 'Site publicado'
+      case 'status_change': return 'Status alterado'
+      case 'link_opened': return 'Link do formulário aberto'
+      default: return rev.action || rev.type || 'Evento'
+    }
+  }
+
+  // Build combined timeline with form_opened_at event
+  const allEvents = [...revisions]
+  if (formOpenedAt) {
+    allEvents.push({
+      id: 'link-opened',
+      action: 'link_opened',
+      type: 'link_opened',
+      message: 'O cliente abriu o link do formulário',
+      created_at: formOpenedAt,
+    })
+  }
+  // Sort by date descending (newest first)
+  allEvents.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
 
   return (
     <div className="card">
       <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
         <Clock className="w-4 h-4 text-gray-400" />
-        Histórico de Revisões
-        {revisions.length > 0 && (
+        Histórico
+        {allEvents.length > 0 && (
           <span className="text-xs font-normal text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
-            {revisions.length}
+            {allEvents.length}
           </span>
         )}
       </h3>
 
-      {revisions.length === 0 ? (
+      {allEvents.length === 0 ? (
         <div className="flex flex-col items-center py-8 text-center">
           <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mb-3">
             <Clock className="w-5 h-5 text-gray-300" />
           </div>
-          <p className="text-gray-400 text-sm">Nenhuma revisão ainda</p>
+          <p className="text-gray-400 text-sm">Nenhum evento ainda</p>
         </div>
       ) : (
         <div className="space-y-3">
-          {revisions.map((rev, i) => (
+          {allEvents.map((rev, i) => (
             <div key={rev.id || i} className="flex gap-3">
               <div className="flex flex-col items-center">
                 <div className="w-8 h-8 rounded-full bg-gray-50 border-2 border-gray-100 flex items-center justify-center flex-shrink-0">
-                  {getRevisionIcon(rev.action)}
+                  {getRevisionIcon(rev.action || rev.type)}
                 </div>
-                {i < revisions.length - 1 && <div className="w-0.5 h-full bg-gray-100 mt-1" />}
+                {i < allEvents.length - 1 && <div className="w-0.5 h-full bg-gray-100 mt-1" />}
               </div>
               <div className="flex-1 pb-4">
                 <div className="flex items-center justify-between gap-2">
                   <p className="text-sm font-medium text-gray-800">
-                    {rev.action === 'approve' ? 'Site Aprovado' :
-                     rev.action === 'request_revision' ? 'Alteração Solicitada' :
-                     rev.action || 'Evento'}
+                    {getRevisionLabel(rev)}
                   </p>
                   <span className="text-xs text-gray-400 flex-shrink-0">{formatDate(rev.created_at)}</span>
                 </div>
                 {rev.message && (
                   <p className="mt-1 text-sm text-gray-600 bg-gray-50 rounded-lg px-3 py-2">
-                    "{rev.message}"
+                    {rev.message}
                   </p>
                 )}
               </div>
@@ -935,11 +962,12 @@ export default function ClientDetail() {
               </div>
             </div>
 
+            <RevisionTimeline revisions={revisions} formOpenedAt={client?.form_opened_at} />
+
           </div>
 
           <div className="lg:col-span-3 space-y-5">
             <FormDataSection formData={client?.form_data} schema={templateSchema} />
-            <RevisionTimeline revisions={revisions} />
           </div>
         </div>
       )}

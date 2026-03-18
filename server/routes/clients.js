@@ -127,7 +127,20 @@ router.post('/', async (req, res) => {
     const status = req.body.status || '';
     const valid = ['formulario_pendente', 'formulario_preenchido', 'em_edicao', 'aguardando_aprovacao', 'alteracao_solicitada', 'aprovado', 'publicado'];
     if (!valid.includes(status)) return res.status(400).json({ error: 'Status inválido' });
+    const statusLabels = {
+      formulario_pendente: 'Formulário Pendente',
+      formulario_preenchido: 'Formulário Preenchido',
+      em_edicao: 'Em Edição',
+      aguardando_aprovacao: 'Aguardando Aprovação',
+      alteracao_solicitada: 'Alteração Solicitada',
+      aprovado: 'Aprovado',
+      publicado: 'Entregue',
+    };
     await db.execute('UPDATE clients SET status = ? WHERE id = ?', [status, id]);
+    await db.execute(
+      "INSERT INTO revisions (client_id, type, message) VALUES (?, 'submit', ?)",
+      [id, `Status alterado para ${statusLabels[status] || status}`]
+    );
     return res.json({ success: true });
   }
 
