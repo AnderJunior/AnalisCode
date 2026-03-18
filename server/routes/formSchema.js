@@ -19,10 +19,15 @@ router.get('/', async (req, res) => {
   if (!client) return res.status(404).json({ error: 'Token inválido' });
 
   const schemaPath = path.join(config.paths.templates, client.template_slug, 'schema.json');
+  const defaultSchemaPath = path.join(__dirname, '..', 'default-schema.json');
+  let schemaFile = schemaPath;
   if (!fs.existsSync(schemaPath)) {
-    return res.status(500).json({ error: 'Schema não encontrado' });
+    if (!fs.existsSync(defaultSchemaPath)) {
+      return res.status(500).json({ error: 'Schema não encontrado' });
+    }
+    schemaFile = defaultSchemaPath;
   }
-  const schema = JSON.parse(fs.readFileSync(schemaPath, 'utf8'));
+  const schema = JSON.parse(fs.readFileSync(schemaFile, 'utf8'));
 
   const [uploads] = await db.execute('SELECT * FROM uploads WHERE client_token = ?', [token]);
   const uploadsMap = {};
