@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loga Play | Conectou. Deu play.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Cursor glow effect -->
+  <div class="cursor-glow" aria-hidden="true"></div>
+
+  <div class="top-info-bar">
+    <div class="top-info-inner">
+      <div class="top-info-left">
+        <a href="tel:08004001560">Ligue Já: 0800 400 1560</a>
+        <a href="#" target="_blank" rel="noopener">Instagram</a>
+        <a href="#" target="_blank" rel="noopener">Facebook</a>
+      </div>
+      <div class="top-info-right">
+        <a href="#" target="_blank" rel="noopener">2ª Via do Boleto</a>
+        <a href="#" target="_blank" rel="noopener">Central do Assinante</a>
+      </div>
+    </div>
+  </div>
+
+  <header class="header">
+    <div class="header-inner">
+      <a href="#" class="logo">
+        <img src="src/logos/Logaplay-logo.png" alt="Loga Play" class="logo-img">
+      </a>
+      <nav class="nav">
+        <a href="#hero">Início</a>
+        <a href="#beneficios">Benefícios</a>
+        <a href="#planos">Planos</a>
+        <a href="#programas">Programas</a>
+        <a href="#canais">Canais</a>
+        <a href="">Área do Cliente</a>
+        <a href="tel:08004001560" class="nav-cta">Assinar Loga Play</a>
+      </nav>
+      <button class="menu-toggle" aria-label="Abrir menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section class="hero" id="hero">
+      <div class="hero-bg">
+        <div class="hero-gradient"></div>
+        <div class="hero-grid"></div>
+        <div class="hero-orb hero-orb-1"></div>
+        <div class="hero-orb hero-orb-2"></div>
+        <div class="hero-orb hero-orb-3"></div>
+      </div>
+      <div class="hero-inner container">
+        <div class="hero-content">
+          <p class="hero-tag animate-in">A internet evoluiu. E a Loga também.</p>
+          <h1 class="hero-title animate-in delay-1">
+            Não perca mais seu filme ou sua serie favorita. Com a <span class="word-play">Loga Play</span> é possivel.
+          </h1>
+          <p class="hero-sub animate-in delay-2">Assista os melhores Filmes, séries, esportes e entretenimento por mais R$ 10,00 /mês no seu plano de internet.</p>
+          <div class="hero-cta animate-in delay-3">
+            <a href="#planos" class="btn btn-primary">
+              <span class="btn-icon">▶</span>
+              Assinar Loga Play
+            </a>
+            <a href="tel:08004001560" class="btn btn-outline">Ligue para Atendente</a>
+          </div>
+        </div>
+        <div class="hero-mockup">
+          <img src="src/mockups/mockup-hero.png" alt="Mockup do sistema Loga Play" class="hero-mockup-img">
+        </div>
+      </div>
+      <!-- 3 linhas curvas + carrosséis de logos (conforme instrucao_hero.md) -->
+      <div class="hero-tracks" aria-hidden="true">
+        <svg class="tracks-svg" viewBox="0 0 1200 320" preserveAspectRatio="none">
+          <path id="track1" d="M 0 220 C 300 45, 900 45, 1200 220" />
+          <path id="track2" d="M 0 265 C 300 120, 900 120, 1200 265" />
+          <path id="track3" d="M 0 305 C 300 185, 900 185, 1200 305" />
+        </svg>
+        <div class="track-layer" id="trackLayer1"></div>
+        <div class="track-layer" id="trackLayer2"></div>
+        <div class="track-layer" id="trackLayer3"></div>
+      </div>
+    </section>
+
+    <!-- Planos e Preços -->
+    <section class="plans" id="planos">
+      <div class="container">
+        <h2 class="section-title reveal">Escolha seu play</h2>
+        <p class="section-sub reveal">Escolha o plano e altere entre 600 Mega e 800 Mega em cada plano.</p>
+        <div class="plans-cards-grid reveal">
+          <article class="plan-card" data-plan="basico" data-price-600="109,90" data-price-800="119,90">
+            <h3 class="plan-card-title">Loga Play Básico</h3>
+            <p class="plan-card-meta">18 canais</p>
+            <div class="plan-card-logos" aria-hidden="true">
+              <div class="plan-card-logos-track">
+                <img src="src/canais/sbt-ao-vivo.png" alt="SBT">
+                <img src="src/canais/record-tv-ao-vivo.png" alt="RecordTV">
+                <img src="src/canais/band-ao-vivo.png" alt="Band">
+                <img src="src/canais/tv-brasil-ao-vivo.png" alt="TV Brasil">
+                <img src="src/canais/gazeta-ao-vivo.png" alt="Gazeta">
+                <img src="src/canais/aparecida-ao-vivo.png" alt="Aparecida">
+                <img src="src/canais/desimpedidos-ao-vivo-vod.png" alt="Desimpedidos">
+                <img src="src/canais/sera-ao-vivo-vod.png" alt="Sera">
+                <img src="src/canais/cnn-brasil-ao-vivo-vod.png" alt="CNN Brasil">
+                <img src="src/canais/manual-do-mundo-ao-vivo-vod.png" alt="Manual do Mundo">
+              </div>
+            </div>
+            <label class="plan-speed-label" for="speed-basico">Escolha a internet</label>
+            <select class="plan-speed-select" id="speed-basico" name="speed-basico">
+              <option value="600">NEW 6 - 600 Mega</option>
+              <option value="800">NEW 6 - 800 Mega</option>
+            </select>
+            <p class="plan-card-price">Por <strong>R$ 109,90</strong><span>/mês</span></p>
+            <a href="tel:08004001560" class="plan-card-btn">Assinar agora</a>
+            <button type="button" class="plan-details-link">Ver mais detalhes</button>
+          </article>
+
+          <article class="plan-card featured" data-plan="cinema" data-price-600="159,90" data-price-800="169,90">
+            <span class="plan-card-badge">Melhor oferta</span>
+            <h3 class="plan-card-title">Loga Play Cinema</h3>
+            <p class="plan-card-meta">72 canais</p>
+            <div class="plan-card-logos" aria-hidden="true">
+              <div class="plan-card-logos-track">
+                <img src="src/canais/ESPN-ao-vivo.png" alt="ESPN">
+                <img src="src/canais/SPORTV1-ao-vivo.png" alt="SporTV">
+                <img src="src/canais/telecine-premium-ao-vivo-vod.png" alt="Telecine Premium">
+                <img src="src/canais/multishow-ao-vivo-vod.png" alt="Multishow">
+                <img src="src/canais/DreamWorks-ao-vivo.png" alt="DreamWorks">
+                <img src="src/canais/Megapix-ao-vivo.png" alt="Megapix">
+                <img src="src/canais/gnt-ao-vivo-vod.png" alt="GNT">
+                <img src="src/canais/Gloob-ao-vivo-vod.png" alt="Gloob">
+                <img src="src/canais/amc-ao-vivo-vod.png" alt="AMC">
+                <img src="src/canais/cnn-brasil-ao-vivo-vod.png" alt="CNN Brasil">
+              </div>
+            </div>
+            <label class="plan-speed-label" for="speed-cinema">Escolha a internet</label>
+            <select class="plan-speed-select" id="speed-cinema" name="speed-cinema">
+              <option value="600">NEW 6 - 600 Mega</option>
+              <option value="800">NEW 6 - 800 Mega</option>
+            </select>
+            <p class="plan-card-price">Por <strong>R$ 159,90</strong><span>/mês</span></p>
+            <a href="tel:08004001560" class="plan-card-btn">Assinar agora</a>
+            <button type="button" class="plan-details-link">Ver mais detalhes</button>
+          </article>
+
+          <article class="plan-card" data-plan="esporte" data-price-600="169,90" data-price-800="189,90">
+            <h3 class="plan-card-title">Loga Play Esporte</h3>
+            <p class="plan-card-meta">80 canais</p>
+            <div class="plan-card-logos" aria-hidden="true">
+              <div class="plan-card-logos-track">
+                <img src="src/canais/ESPN-ao-vivo.png" alt="ESPN">
+                <img src="src/canais/SPORTV1-ao-vivo.png" alt="SporTV">
+                <img src="src/canais/Premiere-ao-vivo.png" alt="Premiere">
+                <img src="src/canais/band-sport-ao-vivo.png" alt="BandSports">
+                <img src="src/canais/telecine-premium-ao-vivo-vod.png" alt="Telecine">
+                <img src="src/canais/multishow-ao-vivo-vod.png" alt="Multishow">
+                <img src="src/canais/DreamWorks-ao-vivo.png" alt="DreamWorks">
+                <img src="src/canais/Megapix-ao-vivo.png" alt="Megapix">
+                <img src="src/canais/Universal-Premiere-ao-vivo.png" alt="Universal Premiere">
+                <img src="src/canais/new-brasil-ao-vivo.svg" alt="New Brasil">
+              </div>
+            </div>
+            <label class="plan-speed-label" for="speed-esporte">Escolha a internet</label>
+            <select class="plan-speed-select" id="speed-esporte" name="speed-esporte">
+              <option value="600">NEW 6 - 600 Mega</option>
+              <option value="800">NEW 6 - 800 Mega</option>
+            </select>
+            <p class="plan-card-price">Por <strong>R$ 169,90</strong><span>/mês</span></p>
+            <a href="tel:08004001560" class="plan-card-btn">Assinar agora</a>
+            <button type="button" class="plan-details-link">Ver mais detalhes</button>
+          </article>
+          </div>
+      </div>
+    </section>
+
+    <div class="plan-modal" id="planModal" aria-hidden="true">
+      <div class="plan-modal-overlay" data-close-modal="true"></div>
+      <div class="plan-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="planModalTitle">
+        <button type="button" class="plan-modal-close" id="planModalClose" aria-label="Fechar detalhes">x</button>
+        <div class="plan-modal-grid">
+          <aside class="plan-modal-left">
+            <h3 id="planModalTitle" class="plan-modal-title">Detalhes do plano</h3>
+            <p class="plan-modal-subtitle" id="planModalChannels">0 canais</p>
+            <div class="plan-modal-price" id="planModalPrice">R$ 0,00/mês</div>
+            <h4 class="plan-modal-channels-title">Canais do plano</h4>
+            <div class="plan-modal-channels-carousel">
+              <div class="plan-modal-channels-viewport">
+                <div class="plan-modal-channels-track" id="planModalChannelsGrid"></div>
+              </div>
+              <div class="plan-modal-channels-nav" id="planModalChannelsNav">
+                <button type="button" class="plan-modal-channels-btn" id="planModalChPrev" aria-label="Página anterior">
+                  <svg viewBox="0 0 24 24" fill="none"><path d="M15 5L8 12L15 19" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <span class="plan-modal-channels-indicator" id="planModalChIndicator">1 / 1</span>
+                <button type="button" class="plan-modal-channels-btn" id="planModalChNext" aria-label="Próxima página">
+                  <svg viewBox="0 0 24 24" fill="none"><path d="M9 5L16 12L9 19" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+              </div>
+            </div>
+          </aside>
+          <section class="plan-modal-right">
+            <div class="plan-modal-speed" id="planModalSpeed">NEW 6 - 600 Mega</div>
+            <ul class="plan-modal-benefits" id="planModalBenefits"></ul>
+            <h4>Informações do plano</h4>
+            <p id="planModalDescriptionA"></p>
+            <p id="planModalDescriptionB"></p>
+            <p id="planModalDescriptionC"></p>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <!-- Carrosséis de banners de programas -->
+    <section class="banners-carousel-section">
+      <div class="banners-carousel-row banners-carousel-top">
+        <div class="banners-carousel-track banners-track-right">
+          <img src="src/banners_programas/brasileirao-globoplay.webp" alt="">
+          <img src="src/banners_programas/championsleague-hbomax.webp" alt="">
+          <img src="src/banners_programas/ladynight-multishow.webp" alt="">
+          <img src="src/banners_programas/round6-netflix.webp" alt="">
+          <img src="src/banners_programas/pacificador-hbomax.webp" alt="">
+          <img src="src/banners_programas/diasperfeitos-globoplay.webp" alt="">
+          <img src="src/banners_programas/liloestitch-disney.webp" alt="">
+          <img src="src/banners_programas/wandinha-netflix.webp" alt="">
+          <img src="src/banners_programas/bundesliga-sportv.webp" alt="">
+          <img src="src/banners_programas/thelastofus-hbomax.webp" alt="">
+          <img src="src/banners_programas/genv-primevideo.webp" alt="">
+          <img src="src/banners_programas/irmosaobra-hh.webp" alt="">
+          <img src="src/banners_programas/miraculousladybug-gloob.webp" alt="">
+          <img src="src/banners_programas/naruto-adultswim.webp" alt="">
+          <img src="src/banners_programas/redacaosportv-sportv.webp" alt="">
+          <img src="src/banners_programas/brasileirao-globoplay.webp" alt="" aria-hidden="true">
+          <img src="src/banners_programas/championsleague-hbomax.webp" alt="" aria-hidden="true">
+          <img src="src/banners_programas/ladynight-multishow.webp" alt="" aria-hidden="true">
+          <img src="src/banners_programas/round6-netflix.webp" alt="" aria-hidden="true">
+          <img src="src/banners_programas/pacificador-hbomax.webp" alt="" aria-hidden="true">
+          <img src="src/banners_programas/diasperfeitos-globoplay.webp" alt="" aria-hidden="true">
+          <img src="src/banners_programas/liloestitch-disney.webp" alt="" aria-hidden="true">
+          <img src="src/banners_programas/wandinha-netflix.webp" alt="" aria-hidden="true">
+          <img src="src/banners_programas/bundesliga-sportv.webp" alt="" aria-hidden="true">
+          <img src="src/banners_programas/thelastofus-hbomax.webp" alt="" aria-hidden="true">
+          <img src="src/banners_programas/genv-primevideo.webp" alt="" aria-hidden="true">
+          <img src="src/banners_programas/irmosaobra-hh.webp" alt="" aria-hidden="true">
+          <img src="src/banners_programas/miraculousladybug-gloob.webp" alt="" aria-hidden="true">
+          <img src="src/banners_programas/naruto-adultswim.webp" alt="" aria-hidden="true">
+          <img src="src/banners_programas/redacaosportv-sportv.webp" alt="" aria-hidden="true">
+        </div>
+      </div>
+      <div class="banners-carousel-row banners-carousel-bottom">
+        <div class="banners-carousel-track banners-track-left">
+          <img src="src/banners_programas/wandinha-netflix.webp" alt="">
+          <img src="src/banners_programas/genv-primevideo.webp" alt="">
+          <img src="src/banners_programas/brasileirao-globoplay.webp" alt="">
+          <img src="src/banners_programas/thelastofus-hbomax.webp" alt="">
+          <img src="src/banners_programas/liloestitch-disney.webp" alt="">
+          <img src="src/banners_programas/naruto-adultswim.webp" alt="">
+          <img src="src/banners_programas/championsleague-hbomax.webp" alt="">
+          <img src="src/banners_programas/miraculousladybug-gloob.webp" alt="">
+          <img src="src/banners_programas/pacificador-hbomax.webp" alt="">
+          <img src="src/banners_programas/ladynight-multishow.webp" alt="">
+          <img src="src/banners_programas/bundesliga-sportv.webp" alt="">
+          <img src="src/banners_programas/irmosaobra-hh.webp" alt="">
+          <img src="src/banners_programas/round6-netflix.webp" alt="">
+          <img src="src/banners_programas/diasperfeitos-globoplay.webp" alt="">
+          <img src="src/banners_programas/redacaosportv-sportv.webp" alt="">
+          <img src="src/banners_programas/wandinha-netflix.webp" alt="" aria-hidden="true">
+          <img src="src/banners_programas/genv-primevideo.webp" alt="" aria-hidden="true">
+          <img src="src/banners_programas/brasileirao-globoplay.webp" alt="" aria-hidden="true">
+          <img src="src/banners_programas/thelastofus-hbomax.webp" alt="" aria-hidden="true">
+          <img src="src/banners_programas/liloestitch-disney.webp" alt="" aria-hidden="true">
+          <img src="src/banners_programas/naruto-adultswim.webp" alt="" aria-hidden="true">
+          <img src="src/banners_programas/championsleague-hbomax.webp" alt="" aria-hidden="true">
+          <img src="src/banners_programas/miraculousladybug-gloob.webp" alt="" aria-hidden="true">
+          <img src="src/banners_programas/pacificador-hbomax.webp" alt="" aria-hidden="true">
+          <img src="src/banners_programas/ladynight-multishow.webp" alt="" aria-hidden="true">
+          <img src="src/banners_programas/bundesliga-sportv.webp" alt="" aria-hidden="true">
+          <img src="src/banners_programas/irmosaobra-hh.webp" alt="" aria-hidden="true">
+          <img src="src/banners_programas/round6-netflix.webp" alt="" aria-hidden="true">
+          <img src="src/banners_programas/diasperfeitos-globoplay.webp" alt="" aria-hidden="true">
+          <img src="src/banners_programas/redacaosportv-sportv.webp" alt="" aria-hidden="true">
+        </div>
+      </div>
+    </section>
+
+    <!-- Cards: Dar play em... (sticky stacking) -->
+    <section class="play-cards" id="play-cards">
+      <div class="container">
+        <h2 class="section-title reveal">Dar play em tudo</h2>
+        <p class="section-sub reveal">Tudo o que você ama, em um só lugar.</p>
+        <div class="stacking-cards">
+
+          <article class="stack-card reveal" style="--card-index: 0">
+            <div class="stack-card-info">
+              <span class="stack-card-tag">Filmes</span>
+              <h3 class="stack-card-title">Dar play no filme</h3>
+              <p class="stack-card-desc">Catálogo sempre atualizado com os maiores lançamentos. Assista sem travar, em qualidade HD e 4K.</p>
+              <a href="#planos" class="stack-card-cta">Assinar agora <span aria-hidden="true">→</span></a>
+            </div>
+            <div class="stack-card-visual">
+              <img src="src/banners_programas/liloestitch-disney.webp" alt="Filmes no Loga Play">
+            </div>
+          </article>
+
+          <article class="stack-card reveal" style="--card-index: 1">
+            <div class="stack-card-info">
+              <span class="stack-card-tag">Séries</span>
+              <h3 class="stack-card-title">Dar play na série</h3>
+              <p class="stack-card-desc">Maratone temporadas inteiras sem interrupção. Os maiores títulos do momento, todos reunidos para você.</p>
+              <a href="#planos" class="stack-card-cta">Assinar agora <span aria-hidden="true">→</span></a>
+            </div>
+            <div class="stack-card-visual">
+              <img src="src/banners_programas/wandinha-netflix.webp" alt="Séries no Loga Play">
+            </div>
+          </article>
+
+          <article class="stack-card reveal" style="--card-index: 2">
+            <div class="stack-card-info">
+              <span class="stack-card-tag">Esportes</span>
+              <h3 class="stack-card-title">Dar play no jogo decisivo</h3>
+              <p class="stack-card-desc">Esportes ao vivo com a emoção de estar no estádio. Futebol, basquete, lutas e muito mais em tempo real.</p>
+              <a href="#planos" class="stack-card-cta">Assinar agora <span aria-hidden="true">→</span></a>
+            </div>
+            <div class="stack-card-visual">
+              <img src="src/banners_programas/brasileirao-globoplay.webp" alt="Esportes ao vivo no Loga Play">
+            </div>
+          </article>
+
+          <article class="stack-card reveal" style="--card-index: 3">
+            <div class="stack-card-info">
+              <span class="stack-card-tag">Família</span>
+              <h3 class="stack-card-title">Dar play no tempo em família</h3>
+              <p class="stack-card-desc">Perfis para cada membro da família. Controle parental integrado para uma experiência segura para todos.</p>
+              <a href="#planos" class="stack-card-cta">Assinar agora <span aria-hidden="true">→</span></a>
+            </div>
+            <div class="stack-card-visual">
+              <img src="src/banners_programas/miraculousladybug-gloob.webp" alt="Conteúdo para toda família no Loga Play">
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Seção 4: modelo original com informações na esquerda -->
+    <section class="programs-showcase" id="programas">
+      <div class="programs-showcase-inner reveal">
+        <div class="programs-showcase-carousel" aria-hidden="true">
+          <div class="programs-showcase-track" id="programsShowcaseTrack"></div>
+        </div>
+        <img src="src/fundos_secoes/secao2_fundo.png" alt="" class="programs-showcase-overlay">
+
+        <div class="programs-showcase-content">
+          <div class="programs-showcase-left">
+            <h2 class="programs-title">A <span class="programs-title-highlight">Loga Play</span> tem tudo</h2>
+            <p class="programs-description">
+              Assista canais ao vivo, series, filmes e esportes em um so lugar com uma variedade de
+              conteudos ao vivo e sob demanda para voce aproveitar o melhor do entretenimento.
+            </p>
+            <div class="programs-tabs" role="tablist" aria-label="Categorias de canais">
+              <button type="button" class="programs-tab is-active" data-category="esportes">Esportes</button>
+              <button type="button" class="programs-tab" data-category="filmes-series">Filmes e Series</button>
+              <button type="button" class="programs-tab" data-category="infantil">Infantil</button>
+              <button type="button" class="programs-tab" data-category="musical">Musical</button>
+              <button type="button" class="programs-tab" data-category="noticias">Noticias</button>
+              <button type="button" class="programs-tab" data-category="tv-aberta">TV Aberta</button>
+              <button type="button" class="programs-tab" data-category="variedades">Variedades</button>
+            </div>
+            <div class="programs-tabs-cards" id="programsTabsCards" aria-live="polite"></div>
+          </div>
+
+          <div class="programs-showcase-ui">
+            <div class="programs-cards-viewport">
+              <div class="programs-cards-track" id="programsCardsTrack" aria-live="polite"></div>
+            </div>
+            <div class="programs-carousel-controls">
+              <button type="button" class="programs-nav-btn" id="programsPrevBtn" aria-label="Programa anterior">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M15 5L8 12L15 19" />
+                </svg>
+              </button>
+              <button type="button" class="programs-nav-btn" id="programsNextBtn" aria-label="Próximo programa">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M9 5L16 12L9 19" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Benefícios -->
+    <section class="benefits" id="beneficios">
+      <div class="container">
+        <h2 class="section-title reveal">Benefícios do Loga Play</h2>
+        <p class="section-sub reveal">Uma plataforma. <span style="color: var(--loga-orange);">Tudo que você gosta.</span></p>
+      </div>
+      <div class="benefits-carousel" aria-label="Carrossel de benefícios">
+        <div class="benefits-track">
+          <article class="benefit-card">
+            <h3 class="benefit-card-title">Universo de conteúdo</h3>
+            <p class="benefit-card-text">+30 mil horas de conteúdo. Séries, filmes, realities, esportes e muito mais. <small>As horas podem sofrer alterações conforme o plano.</small></p>
+            <div class="benefit-card-icon" aria-hidden="true">
+              <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs><linearGradient id="grad-benefit1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#F58B2E"/><stop offset="100%" stop-color="#2ECAB6"/></linearGradient></defs>
+                <circle cx="32" cy="32" r="28" stroke="url(#grad-benefit1)" stroke-width="2.5" fill="none"/>
+                <path d="M26 22v20l20-10L26 22z" fill="url(#grad-benefit1)"/>
+              </svg>
+            </div>
+          </article>
+          <article class="benefit-card">
+            <h3 class="benefit-card-title">8 perfis e 4 telas</h3>
+            <p class="benefit-card-text">Crie até 8 perfis e assista em até 4 telas de forma simultânea em diferentes dispositivos.</p>
+            <div class="benefit-card-icon" aria-hidden="true">
+              <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs><linearGradient id="grad-benefit2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#F58B2E"/><stop offset="100%" stop-color="#2ECAB6"/></linearGradient></defs>
+                <rect x="12" y="14" width="40" height="28" rx="2" stroke="url(#grad-benefit2)" stroke-width="2" fill="none"/>
+                <path d="M22 42h20M32 42v6M28 48h8" stroke="url(#grad-benefit2)" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+          </article>
+          <article class="benefit-card">
+            <h3 class="benefit-card-title">Ambiente seguro</h3>
+            <p class="benefit-card-text">Plataforma com perfil para crianças e Controle Parental para uma experiência segura.</p>
+            <div class="benefit-card-icon" aria-hidden="true">
+              <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs><linearGradient id="grad-benefit3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#F58B2E"/><stop offset="100%" stop-color="#2ECAB6"/></linearGradient></defs>
+                <circle cx="22" cy="24" r="10" stroke="url(#grad-benefit3)" stroke-width="2" fill="none"/>
+                <circle cx="42" cy="24" r="10" stroke="url(#grad-benefit3)" stroke-width="2" fill="none"/>
+                <path d="M14 54c0-8 3.5-16 8-22M50 54c0-8-3.5-16-8-22M32 36v18M26 54h12" stroke="url(#grad-benefit3)" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+          </article>
+          <article class="benefit-card">
+            <h3 class="benefit-card-title">Canais ao vivo</h3>
+            <p class="benefit-card-text">Conte com a diversidade de canais de TV ao vivo: notícias, entretenimento, variedades e esportes.</p>
+            <div class="benefit-card-icon" aria-hidden="true">
+              <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs><linearGradient id="grad-benefit4" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#F58B2E"/><stop offset="100%" stop-color="#2ECAB6"/></linearGradient></defs>
+                <path d="M32 16v8M32 40v8M16 32h8M40 32h8M20 20l5.5 5.5M38.5 38.5L44 44M20 44l5.5-5.5M38.5 25.5L44 20" stroke="url(#grad-benefit4)" stroke-width="2" stroke-linecap="round"/>
+                <circle cx="32" cy="32" r="10" stroke="url(#grad-benefit4)" stroke-width="2" fill="none"/>
+                <path d="M30 32l4-2v4l-4-2z" fill="url(#grad-benefit4)"/>
+              </svg>
+            </div>
+          </article>
+          <article class="benefit-card">
+            <h3 class="benefit-card-title">Conteúdo em nuvem</h3>
+            <p class="benefit-card-text">Experiência leve, sem alto consumo de internet. Assista com qualidade sem pesar na sua franquia.</p>
+            <div class="benefit-card-icon" aria-hidden="true">
+              <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs><linearGradient id="grad-benefit5" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#F58B2E"/><stop offset="100%" stop-color="#2ECAB6"/></linearGradient></defs>
+                <path d="M48 40c4-2 8-6 8-12 0-8-6-14-14-14-2 0-4 .5-6 1.5C34 22 30 20 26 20c-10 0-18 8-18 18 0 2 .5 4 1 6-6 2-10 8-10 14 0 8 6 14 14 14h32c6 0 12-5 12-12 0-4-2-8-5-10z" stroke="url(#grad-benefit5)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              </svg>
+            </div>
+          </article>
+
+          <!-- Duplicados para loop contínuo -->
+          <article class="benefit-card" aria-hidden="true">
+            <h3 class="benefit-card-title">Universo de conteúdo</h3>
+            <p class="benefit-card-text">+30 mil horas de conteúdo. Séries, filmes, realities, esportes e muito mais. <small>As horas podem sofrer alterações conforme o plano.</small></p>
+            <div class="benefit-card-icon" aria-hidden="true">
+              <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs><linearGradient id="grad-benefit1b" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#F58B2E"/><stop offset="100%" stop-color="#2ECAB6"/></linearGradient></defs>
+                <circle cx="32" cy="32" r="28" stroke="url(#grad-benefit1b)" stroke-width="2.5" fill="none"/>
+                <path d="M26 22v20l20-10L26 22z" fill="url(#grad-benefit1b)"/>
+              </svg>
+            </div>
+          </article>
+          <article class="benefit-card" aria-hidden="true">
+            <h3 class="benefit-card-title">8 perfis e 4 telas</h3>
+            <p class="benefit-card-text">Crie até 8 perfis e assista em até 4 telas de forma simultânea em diferentes dispositivos.</p>
+            <div class="benefit-card-icon" aria-hidden="true">
+              <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs><linearGradient id="grad-benefit2b" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#F58B2E"/><stop offset="100%" stop-color="#2ECAB6"/></linearGradient></defs>
+                <rect x="12" y="14" width="40" height="28" rx="2" stroke="url(#grad-benefit2b)" stroke-width="2" fill="none"/>
+                <path d="M22 42h20M32 42v6M28 48h8" stroke="url(#grad-benefit2b)" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+          </article>
+          <article class="benefit-card" aria-hidden="true">
+            <h3 class="benefit-card-title">Ambiente seguro</h3>
+            <p class="benefit-card-text">Plataforma com perfil para crianças e Controle Parental para uma experiência segura.</p>
+            <div class="benefit-card-icon" aria-hidden="true">
+              <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs><linearGradient id="grad-benefit3b" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#F58B2E"/><stop offset="100%" stop-color="#2ECAB6"/></linearGradient></defs>
+                <circle cx="22" cy="24" r="10" stroke="url(#grad-benefit3b)" stroke-width="2" fill="none"/>
+                <circle cx="42" cy="24" r="10" stroke="url(#grad-benefit3b)" stroke-width="2" fill="none"/>
+                <path d="M14 54c0-8 3.5-16 8-22M50 54c0-8-3.5-16-8-22M32 36v18M26 54h12" stroke="url(#grad-benefit3b)" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+          </article>
+          <article class="benefit-card" aria-hidden="true">
+            <h3 class="benefit-card-title">Canais ao vivo</h3>
+            <p class="benefit-card-text">Conte com a diversidade de canais de TV ao vivo: notícias, entretenimento, variedades e esportes.</p>
+            <div class="benefit-card-icon" aria-hidden="true">
+              <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs><linearGradient id="grad-benefit4b" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#F58B2E"/><stop offset="100%" stop-color="#2ECAB6"/></linearGradient></defs>
+                <path d="M32 16v8M32 40v8M16 32h8M40 32h8M20 20l5.5 5.5M38.5 38.5L44 44M20 44l5.5-5.5M38.5 25.5L44 20" stroke="url(#grad-benefit4b)" stroke-width="2" stroke-linecap="round"/>
+                <circle cx="32" cy="32" r="10" stroke="url(#grad-benefit4b)" stroke-width="2" fill="none"/>
+                <path d="M30 32l4-2v4l-4-2z" fill="url(#grad-benefit4b)"/>
+              </svg>
+            </div>
+          </article>
+          <article class="benefit-card" aria-hidden="true">
+            <h3 class="benefit-card-title">Conteúdo em nuvem</h3>
+            <p class="benefit-card-text">Experiência leve, sem alto consumo de internet. Assista com qualidade sem pesar na sua franquia.</p>
+            <div class="benefit-card-icon" aria-hidden="true">
+              <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs><linearGradient id="grad-benefit5b" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#F58B2E"/><stop offset="100%" stop-color="#2ECAB6"/></linearGradient></defs>
+                <path d="M48 40c4-2 8-6 8-12 0-8-6-14-14-14-2 0-4 .5-6 1.5C34 22 30 20 26 20c-10 0-18 8-18 18 0 2 .5 4 1 6-6 2-10 8-10 14 0 8 6 14 14 14h32c6 0 12-5 12-12 0-4-2-8-5-10z" stroke="url(#grad-benefit5b)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              </svg>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Canais -->
+    <section class="channels" id="canais">
+      <div class="container">
+        <h2 class="section-title reveal">Canais inclusos no seu plano</h2>
+        <p class="section-sub reveal">Explore todos os canais disponíveis em cada plano</p>
+
+        <div class="channels-plan-tabs reveal" role="tablist">
+          <button type="button" class="channels-plan-tab is-active" data-channels-plan="basico">
+            Loga Play Básico
+            <span class="channels-plan-tab-count">18 canais</span>
+          </button>
+          <button type="button" class="channels-plan-tab" data-channels-plan="cinema">
+            Loga Play Cinema
+            <span class="channels-plan-tab-count">72 canais</span>
+          </button>
+          <button type="button" class="channels-plan-tab" data-channels-plan="esporte">
+            Loga Play Esporte
+            <span class="channels-plan-tab-count">80 canais</span>
+          </button>
+        </div>
+
+        <div class="channels-plan-content reveal" id="channelsPlanContent"></div>
+      </div>
+    </section>
+
+    <!-- FAQ + Dispositivos -->
+    <section class="faq" id="faq">
+      <div class="container">
+        <div class="faq-layout reveal">
+          <div class="faq-left">
+            <h2 class="faq-section-title">Perguntas frequentes</h2>
+            <div class="faq-list">
+
+              <details class="faq-item">
+                <summary class="faq-question">O que é o Loga Play?</summary>
+                <div class="faq-answer">
+                  <p>O Loga Play é uma plataforma de streaming exclusiva para clientes Loga, que reúne canais ao vivo, filmes, séries, esportes e conteúdo infantil em um só lugar.</p>
+                </div>
+              </details>
+
+              <details class="faq-item">
+                <summary class="faq-question">Quantos dispositivos posso usar ao mesmo tempo?</summary>
+                <div class="faq-answer">
+                  <p>Você pode assistir em até 4 telas simultaneamente e criar até 8 perfis diferentes na mesma conta.</p>
+                </div>
+              </details>
+
+              <details class="faq-item">
+                <summary class="faq-question">Preciso de internet Loga para assinar?</summary>
+                <div class="faq-answer">
+                  <p>Sim, o Loga Play é um serviço exclusivo para clientes dos planos de internet Loga NEW 6 — 600 Mega e 800 Mega.</p>
+                </div>
+              </details>
+
+              <details class="faq-item">
+                <summary class="faq-question">Em quais dispositivos posso assistir?</summary>
+                <div class="faq-answer">
+                  <p>Você pode assistir em Smart TVs, celulares, tablets, computadores e dispositivos como Fire Stick. Basta baixar o app Loga Play.</p>
+                </div>
+              </details>
+
+              <details class="faq-item">
+                <summary class="faq-question">Tem controle parental?</summary>
+                <div class="faq-answer">
+                  <p>Sim! O Loga Play possui perfil infantil e controle parental integrado, garantindo uma experiência segura para toda a família.</p>
+                </div>
+              </details>
+
+              <details class="faq-item">
+                <summary class="faq-question">Como faço para assinar o Loga Play?</summary>
+                <div class="faq-answer">
+                  <p>É simples! Escolha o plano ideal para você e ligue para 0800 400 1560 ou acesse loga.net.br para contratar.</p>
+                </div>
+              </details>
+
+            </div>
+          </div>
+
+          <div class="faq-right">
+            <h2 class="faq-section-title">Assista onde quiser</h2>
+            <p class="faq-right-sub">Smart TV, celular, tablet ou computador. O app Loga Play está em todos os seus dispositivos.</p>
+            <div class="devices-list">
+              <div class="device-item">
+                <span class="device-icon" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="dev-tv" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#F58B2E"/><stop offset="100%" stop-color="#2ECAB6"/></linearGradient></defs><rect x="4" y="10" width="40" height="26" rx="2" stroke="url(#dev-tv)" stroke-width="2" fill="none"/><path d="M14 36h20M24 36v4" stroke="url(#dev-tv)" stroke-width="2" stroke-linecap="round"/></svg></span>
+                <span>Smart TVs</span>
+              </div>
+              <div class="device-item">
+                <span class="device-icon" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="dev-mobile" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#F58B2E"/><stop offset="100%" stop-color="#2ECAB6"/></linearGradient></defs><rect x="12" y="4" width="24" height="40" rx="4" stroke="url(#dev-mobile)" stroke-width="2" fill="none"/><circle cx="24" cy="38" r="2" fill="url(#dev-mobile)"/></svg></span>
+                <span>Celular</span>
+              </div>
+              <div class="device-item">
+                <span class="device-icon" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="dev-desk" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#F58B2E"/><stop offset="100%" stop-color="#2ECAB6"/></linearGradient></defs><rect x="4" y="12" width="40" height="24" rx="2" stroke="url(#dev-desk)" stroke-width="2" fill="none"/><path d="M12 36h24M16 36v6M32 36v6M24 36v4" stroke="url(#dev-desk)" stroke-width="2" stroke-linecap="round"/></svg></span>
+                <span>Computador</span>
+              </div>
+              <div class="device-item">
+                <span class="device-icon" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="dev-stick" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#F58B2E"/><stop offset="100%" stop-color="#2ECAB6"/></linearGradient></defs><rect x="14" y="8" width="20" height="32" rx="4" stroke="url(#dev-stick)" stroke-width="2" fill="none"/><path d="M20 18h8M20 24h8" stroke="url(#dev-stick)" stroke-width="2" stroke-linecap="round"/></svg></span>
+                <span>Fire Stick e mais</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-logo">
+        <img src="src/logos/Logaplay-logo.png" alt="Loga">
+      </div>
+      <p class="footer-tagline">Não é só internet. <span class="footer-tagline-highlight">É Loga Play.</span></p>
+      <p class="footer-legal">© 2026 Loga Play. Todos os direitos reservados</p>
+    </div>
+  </footer>
+
+  <!-- Slideshow fullscreen de inatividade -->
+  <div class="idle-slideshow" id="idleSlideshow" aria-hidden="true">
+    <div class="idle-slideshow-img" id="idleSlideshowImg"></div>
+    <div class="idle-slideshow-img idle-slideshow-img--next" id="idleSlideshowImgNext"></div>
+    <div class="idle-slideshow-hint">Mova o mouse ou toque para voltar</div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

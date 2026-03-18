@@ -1,0 +1,26 @@
+RewriteEngine On
+
+# Redirect to HTTPS (uncomment in production)
+# RewriteCond %{HTTPS} off
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Block access to sensitive files
+<FilesMatch "\.(php|json)$">
+    <IfModule mod_authz_core.c>
+        # Apache 2.4
+    </IfModule>
+</FilesMatch>
+
+# Protect includes directory
+<IfModule mod_rewrite.c>
+    RewriteRule ^includes/ - [F,L]
+</IfModule>
+
+# Pretty URLs for form
+RewriteRule ^preencher/([a-f0-9]+)/?$ form/index.php?token=$1 [L,QSA]
+
+# Pretty URLs for review
+RewriteRule ^aprovar/([a-f0-9]+)/?$ review/index.php?token=$1 [L,QSA]
+
+# Pretty URLs for preview
+RewriteRule ^preview/([a-f0-9]+)/?$ api/preview.php?token=$1 [L,QSA]

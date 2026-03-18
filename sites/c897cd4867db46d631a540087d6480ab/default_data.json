@@ -1,0 +1,97 @@
+{
+  "brand": {
+    "name": "NutriVida ES",
+    "tagline": "Nutricao de qualidade no coracao de Vitoria"
+  },
+  "professional": {
+    "name": "Dra. Camila Rodrigues",
+    "title": "Nutricionista Clinica e Funcional",
+    "crn": "CRN-4",
+    "instagram": "@camilarodriguesnutri"
+  },
+  "hero": {
+    "badge": "Vitoria, Espirito Santo",
+    "title": "Transforme sua saude com acompanhamento nutricional personalizado",
+    "subtitle": "Sou nutricionista especializada, dedicada a ajudar voce a conquistar uma vida mais saudavel e equilibrada na capital capixaba.",
+    "cta_text": "Agendar Consulta",
+    "image": ""
+  },
+  "stats": [
+    { "number": 2500, "suffix": "+", "label": "Pacientes Atendidos" },
+    { "number": 12, "suffix": "+", "label": "Anos de Experiencia" },
+    { "number": 98, "suffix": "%", "label": "de Satisfacao" }
+  ],
+  "about": {
+    "bio": "Sou a Dra. Camila Rodrigues, nutricionista registrada no CRN-4, com mais de 12 anos de experiencia em nutricao clinica e funcional. Minha missao e transformar a sua relacao com a alimentacao de forma leve, personalizada e sem dietas restritivas.",
+    "experience_years": 12,
+    "patients_count": 2500,
+    "differentials": [
+      { "title": "Atendimento Humanizado", "description": "Cada paciente e unico. Escuto suas necessidades e adapto o plano ao seu estilo de vida." },
+      { "title": "Tecnologia Avancada", "description": "Bioimpedancia e software de prescricao dietetica para resultados precisos." },
+      { "title": "Localizacao Prime", "description": "Consultorio moderno e acessivel no coracao de Vitoria." }
+    ],
+    "image": ""
+  },
+  "services": {
+    "tag": "Especialidades",
+    "title": "Especialidades da Dra. Camila Rodrigues",
+    "subtitle": "Tratamentos nutricionais personalizados para ajudar voce a emagrecer, ganhar saude e viver com mais bem-estar",
+    "items": [
+      { "icon": "notepad", "title": "Plano Alimentar Personalizado", "description": "Um cardapio feito sob medida para seu corpo, sua rotina e seus objetivos de saude." },
+      { "icon": "leaf", "title": "Reeducacao Alimentar", "description": "Planejamento alimentar personalizado para criar habitos saudaveis e sustentaveis no dia a dia." },
+      { "icon": "prohibit", "title": "Controle de Compulsao Alimentar", "description": "Estrategias nutricionais que ajudam a reduzir episodios de compulsao e ansiedade relacionadas a alimentacao." },
+      { "icon": "flame", "title": "Nutricao para Acelerar o Metabolismo", "description": "Alimentacao estrategica para otimizar a queima de gordura e melhorar o funcionamento metabolico." },
+      { "icon": "barbell", "title": "Nutricao para Ganho de Massa Magra", "description": "Planos alimentares focados no aumento de massa muscular e melhora do desempenho fisico." },
+      { "icon": "fork-knife", "title": "Nutricao Comportamental", "description": "Abordagem que conecta mente e corpo, ajudando voce a desenvolver uma relacao mais saudavel com a comida." }
+    ]
+  },
+  "testimonials": [
+    { "stars": 5, "text": "Com a NutriVida aprendi a comer sem medo e sem culpa. Pela primeira vez, emagreci sem sentir que estava de dieta.", "name": "Carolina M.", "detail": "41 anos" },
+    { "stars": 5, "text": "A Dra. Camila mudou minha relacao com a comida. Me sinto mais leve e com muito mais energia no dia a dia.", "name": "Juliana S.", "detail": "35 anos" },
+    { "stars": 5, "text": "O plano realmente se encaixou na minha corrida. Hoje consigo manter a alimentacao saudavel mesmo com a rotina agitada.", "name": "Mariana L.", "detail": "34 anos" },
+    { "stars": 4, "text": "Achava impossivel emagrecer sem sofrer. Estou mais leve e muito mais feliz com meu corpo.", "name": "Fernanda R.", "detail": "29 anos" },
+    { "stars": 5, "text": "Depois de anos tentando dietas malucas, finalmente encontrei um acompanhamento que funciona de verdade.", "name": "Renata C.", "detail": "38 anos" },
+    { "stars": 5, "text": "A consulta e super acolhedora. A Dra. Camila realmente se importa com cada detalhe da nossa saude.", "name": "Amanda P.", "detail": "32 anos" }
+  ],
+  "blog": [
+    { "category": "Emagrecimento", "title": "Como Emagrecer de Forma Saudavel: 7 Dicas para Perder Peso Sem Sofrimento", "date": "14/05/2025" },
+    { "category": "Compulsao Alimentar", "title": "Alimentos que Aceleram o Metabolismo e Ajudam no Emagrecimento", "date": "14/05/2025" },
+    { "category": "Emagrecimento", "title": "Compulsao Alimentar: Como Controlar a Vontade Exagerada de Comer", "date": "14/05/2025" },
+    { "category": "Emagrecimento", "title": "O Que Comer a Noite para Emagrecer Sem Passar Fome", "date": "14/05/2025" },
+    { "category": "Emagrecimento", "title": "Dieta ou Reeducacao Alimentar: Qual e Melhor para Emagrecer?", "date": "14/05/2025" }
+  ],
+  "faq": [
+    { "question": "Como funciona o atendimento com a Dra. Camila Rodrigues?", "answer": "O atendimento comeca com uma consulta completa, onde avalio seu historico de saude, habitos alimentares, rotina e objetivos. A partir disso, crio um plano alimentar 100% personalizado, com acompanhamento continuo para ajustes e suporte." },
+    { "question": "Preciso cortar todos os alimentos que gosto para emagrecer?", "answer": "De jeito nenhum! Meu metodo e baseado em equilibrio e reeducacao alimentar. Voce vai aprender a fazer escolhas mais inteligentes sem abrir mao do prazer de comer." },
+    { "question": "Em quanto tempo verei resultados?", "answer": "Os primeiros resultados geralmente aparecem entre 2 a 4 semanas, dependendo do seu metabolismo e comprometimento com o plano. O mais importante e que os resultados sejam sustentaveis e duradouros." },
+    { "question": "O plano alimentar e dificil de seguir?", "answer": "Nao! O plano e feito sob medida para a sua rotina, considerando seus gostos, horarios e estilo de vida. Meu objetivo e tornar a alimentacao saudavel algo simples e prazeroso." },
+    { "question": "Voce atende por plano de saude?", "answer": "Atualmente o atendimento e particular, mas emito recibo para reembolso junto ao seu plano de saude. Consulte sua operadora sobre as condicoes de reembolso." },
+    { "question": "Posso fazer acompanhamento online?", "answer": "Sim! Ofereco consultas online para quem nao mora em Vitoria ou prefere a comodidade do atendimento a distancia. O acompanhamento e o mesmo da consulta presencial." }
+  ],
+  "cta": {
+    "title": "Pronto para transformar sua alimentacao?",
+    "subtitle": "Agende sua primeira consulta e de o primeiro passo rumo a uma vida mais saudavel. Estou esperando por voce em Vitoria!",
+    "btn1": "Agendar Consulta",
+    "btn2": "WhatsApp"
+  },
+  "contact": {
+    "whatsapp": "5527999999999",
+    "phone": "(27) 3345-6789",
+    "email": "contato@nutrivida.com.br",
+    "address": "Rua Aleixo Netto, 1205, Sala 301",
+    "hours": "Segunda a Sabado: 09h00 as 18h30",
+    "maps_embed": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3741.5!2d-40.29!3d-20.29"
+  },
+  "social": {
+    "instagram": "https://instagram.com/camilarodriguesnutri",
+    "facebook": "https://facebook.com/nutrivida",
+    "tiktok": "https://tiktok.com/@nutrivida",
+    "whatsapp": "https://wa.me/5527999999999"
+  },
+  "colors": {
+    "primary": "#2D6A4F",
+    "primary-dark": "#1B4332",
+    "primary-light": "#52B788",
+    "primary-lighter": "#D8F3DC"
+  }
+}

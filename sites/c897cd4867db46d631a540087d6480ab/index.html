@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="NutriVida ES - Nutricionistas especializados em Vitória, Espírito Santo. Consultas personalizadas, planos alimentares e acompanhamento nutricional.">
+  <meta name="keywords" content="nutricionista, Vitória, Espírito Santo, nutrição, dieta, plano alimentar, saúde">
+  <title>NutriVida ES | Nutricionistas em Vitória - Espírito Santo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/templates/nutricionista/css/styles.css">
+  <link rel="stylesheet" href="/templates/nutricionista/css/animations.css">
+  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+</head>
+<body>
+  <!-- Header / Navbar -->
+  <header class="header" id="header">
+    <div class="container header__inner">
+      <a href="#" class="header__logo">
+        <span class="logo-icon"><i class="ph ph-leaf"></i></span>
+        <span class="logo-text">Nutri<strong>Vida</strong> ES</span>
+      </a>
+      <nav class="nav" id="nav">
+        <ul class="nav__list">
+          <li><a href="#inicio" class="nav__link active">Início</a></li>
+          <li><a href="#sobre" class="nav__link">Sobre</a></li>
+          <li><a href="#servicos" class="nav__link">Serviços</a></li>
+<li><a href="#depoimentos" class="nav__link">Depoimentos</a></li>
+          <li><a href="#blog" class="nav__link">Blog</a></li>
+          <li><a href="#faq" class="nav__link">FAQ</a></li>
+          <li><a href="#contato" class="nav__link">Contato</a></li>
+        </ul>
+      </nav>
+      <a href="#contato" class="btn btn--primary header__cta">Agendar Consulta</a>
+      <button class="hamburger" id="hamburger" aria-label="Abrir menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero" id="inicio">
+    <div class="hero__overlay"></div>
+    <div class="container hero__grid">
+      <div class="hero__content">
+        <p class="hero__badge fade-in"><i class="ph ph-map-pin"></i> Vitória, Espírito Santo</p>
+        <h1 class="hero__title fade-in">Transforme sua saúde com acompanhamento nutricional personalizado</h1>
+        <p class="hero__subtitle fade-in">Sou nutricionista especializada, dedicada a ajudar você a conquistar uma vida mais saudável e equilibrada na capital capixaba.</p>
+        <div class="hero__actions fade-in">
+          <a href="#contato" class="btn btn--primary btn--lg">Agendar Consulta <span class="btn__arrow"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.29 6.71a1 1 0 0 0 0 1.41L13.17 12l-3.88 3.88a1 1 0 1 0 1.42 1.41l4.59-4.59a1 1 0 0 0 0-1.41L10.71 6.7a1 1 0 0 0-1.42.01z"/></svg></span></a>
+        </div>
+        <div class="hero__stats-wrapper fade-in">
+          <div class="hero__stats" id="hero-stats-track">
+            <div class="hero__stat">
+              <span class="hero__stat-number" data-count="2500">0</span>
+              <span class="hero__stat-label">Pacientes Atendidos</span>
+            </div>
+            <div class="hero__stat">
+              <span class="hero__stat-number" data-count="12">0</span>
+              <span class="hero__stat-label">Anos de Experiência</span>
+            </div>
+            <div class="hero__stat">
+              <span class="hero__stat-number" data-count="98">0</span>
+              <span class="hero__stat-label">% de Satisfação</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="hero__image fade-in">
+        <div class="hero__image-frame">
+          <div class="hero__image-placeholder">
+            <span class="hero__image-icon"><i class="ph ph-camera"></i></span>
+            <p>Sua foto aqui</p>
+            <span class="hero__image-hint">Substitua por uma imagem real<br>(ex: 600x700px)</span>
+          </div>
+        </div>
+        <div class="hero__nametag">
+          <div class="hero__nametag-avatar">
+            <i class="ph ph-user"></i>
+          </div>
+          <div class="hero__nametag-info">
+            <span class="hero__nametag-name">Dra. Camila Rodrigues <i class="ph-fill ph-seal-check hero__nametag-verified"></i></span>
+            <span class="hero__nametag-handle">@camilarodriguesnutri</span>
+          </div>
+        </div>
+        <div class="hero__image-decoration hero__image-decoration--1"></div>
+        <div class="hero__image-decoration hero__image-decoration--2"></div>
+      </div>
+    </div>
+    <div class="hero__scroll">
+      <a href="#sobre" class="hero__scroll-btn" aria-label="Rolar para baixo">
+        <span class="hero__scroll-icon"><i class="ph ph-caret-down"></i></span>
+      </a>
+    </div>
+  </section>
+
+  <!-- Marquee Section -->
+  <section class="marquee-section">
+    <div class="marquee">
+      <div class="marquee__track">
+        <div class="marquee__item"><i class="ph ph-prohibit"></i> Sem restrições</div>
+        <div class="marquee__item"><i class="ph ph-target"></i> Resultados que respeitam o seu ritmo</div>
+        <div class="marquee__item"><i class="ph ph-sparkle"></i> Planos alimentares que cabem na sua rotina</div>
+        <div class="marquee__item"><i class="ph ph-battery-charging"></i> Mais energia e bem-estar no dia a dia</div>
+        <div class="marquee__item"><i class="ph ph-heart"></i> Alimentação leve sem culpa</div>
+        <div class="marquee__item"><i class="ph ph-leaf"></i> Nutrição funcional e personalizada</div>
+        <div class="marquee__item"><i class="ph ph-smiley"></i> Autoestima e confiança no corpo</div>
+        <div class="marquee__item"><i class="ph ph-fire"></i> Metabolismo ativo e saudável</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sobre Section -->
+  <section class="section section--light" id="sobre">
+    <div class="container">
+      <div class="about__grid">
+        <div class="about__image fade-in-left">
+          <div class="about__image-placeholder">
+            <span class="about__image-icon"><i class="ph ph-camera"></i></span>
+            <p>Sua foto aqui</p>
+            <span class="about__image-hint">Substitua por uma imagem real<br>(ex: 600x700px)</span>
+          </div>
+        </div>
+        <div class="about__content fade-in-right">
+          <span class="section__tag">Quem Somos</span>
+          <h2 class="about__heading">Nutrição de qualidade no coração de Vitória</h2>
+          <p class="about__text">Sou a Dra. Camila Rodrigues, nutricionista registrada no CRN-4, com mais de 12 anos de experiência em nutrição clínica e funcional. Minha missão é transformar a sua relação com a alimentação de forma leve, personalizada e sem dietas restritivas.</p>
+          <p class="about__text">No meu consultório em Vitória, utilizo avaliação antropométrica completa, bioimpedância e software de prescrição dietética para criar planos alimentares que realmente se encaixam na sua rotina e nos seus objetivos.</p>
+          <div class="about__features">
+            <div class="about__feature">
+              <span class="about__feature-icon"><i class="ph-fill ph-check-circle"></i></span>
+              <div>
+                <strong>Atendimento Humanizado</strong>
+                <p>Escuto suas necessidades e adapto cada plano ao seu estilo de vida.</p>
+              </div>
+            </div>
+            <div class="about__feature">
+              <span class="about__feature-icon"><i class="ph-fill ph-check-circle"></i></span>
+              <div>
+                <strong>Tecnologia Avançada</strong>
+                <p>Bioimpedância, apps de acompanhamento e teleconsultas disponíveis.</p>
+              </div>
+            </div>
+            <div class="about__feature">
+              <span class="about__feature-icon"><i class="ph-fill ph-check-circle"></i></span>
+              <div>
+                <strong>Localização Privilegiada</strong>
+                <p>Fácil acesso na Praia do Canto, Vitória - ES.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Botão mobile only -->
+        <a href="https://wa.me/5527999999999" class="btn btn--primary btn--lg about__mobile-btn">Falar com Especialista <span class="btn__arrow"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.29 6.71a1 1 0 0 0 0 1.41L13.17 12l-3.88 3.88a1 1 0 1 0 1.42 1.41l4.59-4.59a1 1 0 0 0 0-1.41L10.71 6.7a1 1 0 0 0-1.42.01z"/></svg></span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Serviços Section -->
+  <section class="section section--green" id="servicos">
+    <div class="container">
+      <div class="section__header fade-in">
+        <span class="section__tag section__tag--light">ESPECIALIDADES</span>
+        <h2 class="section__title section__title--light">Especialidades da Dra. Camila Rodrigues</h2>
+        <p class="section__subtitle section__subtitle--light">Tratamentos nutricionais personalizados para ajudar você a emagrecer, ganhar saúde e viver com mais bem-estar</p>
+      </div>
+      <div class="services__grid">
+        <div class="service-card fade-in">
+          <div class="service-card__icon-wrap"><i class="ph ph-notepad"></i></div>
+          <h3 class="service-card__title">Plano Alimentar Personalizado</h3>
+          <p class="service-card__text">Um cardápio feito sob medida para seu corpo, sua rotina e seus objetivos de saúde.</p>
+        </div>
+        <div class="service-card service-card--colored fade-in">
+          <div class="service-card__icon-wrap"><i class="ph ph-leaf"></i></div>
+          <h3 class="service-card__title">Reeducação Alimentar</h3>
+          <p class="service-card__text">Aprenda a comer de forma saudável e prazerosa, sem dietas restritivas ou sofrimento.</p>
+        </div>
+        <div class="service-card fade-in">
+          <div class="service-card__icon-wrap"><i class="ph ph-brain"></i></div>
+          <h3 class="service-card__title">Controle de Compulsão Alimentar</h3>
+          <p class="service-card__text">Estratégias nutricionais e comportamentais para controlar a compulsão e comer com equilíbrio.</p>
+        </div>
+        <div class="service-card service-card--colored fade-in">
+          <div class="service-card__icon-wrap"><i class="ph ph-fire"></i></div>
+          <h3 class="service-card__title">Nutrição para Acelerar o Metabolismo</h3>
+          <p class="service-card__text">Alimentos e estratégias que ativam seu metabolismo para queimar mais calorias naturalmente.</p>
+        </div>
+        <div class="service-card fade-in">
+          <div class="service-card__icon-wrap"><i class="ph ph-barbell"></i></div>
+          <h3 class="service-card__title">Nutrição para Ganho de Massa Magra</h3>
+          <p class="service-card__text">Plano nutricional focado em hipertrofia, com a combinação ideal de nutrientes para seus treinos.</p>
+        </div>
+        <div class="service-card service-card--colored fade-in">
+          <div class="service-card__icon-wrap"><i class="ph ph-heart"></i></div>
+          <h3 class="service-card__title">Nutrição Comportamental</h3>
+          <p class="service-card__text">Transforme sua relação com a comida, trabalhando emoções e hábitos para uma alimentação consciente.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Depoimentos Section -->
+  <section class="section section--testimonials" id="depoimentos">
+    <div class="container">
+      <div class="testimonials__box fade-in">
+        <div class="testimonials__header">
+          <span class="section__tag section__tag--light">Depoimentos</span>
+          <h2 class="testimonials__title">O que as minhas pacientes<br>dizem sobre <em>meu atendimento</em>?</h2>
+          <p class="testimonials__subtitle">Aqui estão algumas <strong>histórias reais</strong> de mulheres que escolheram cuidar de si mesmas com mais leveza.</p>
+        </div>
+        <div class="testimonials__carousel">
+          <div class="testimonials__track" id="testimonials-track">
+            <div class="testimonial-card">
+              <div class="testimonial-card__stars">★★★★★</div>
+              <p class="testimonial-card__text">"Eu achava impossível emagrecer sem sofrer. Estou 7kg mais leve e muito mais confiante."</p>
+              <div class="testimonial-card__author">
+                <div class="testimonial-card__avatar">C</div>
+                <div>
+                  <strong>Carolina,</strong>
+                  <p>41 anos</p>
+                </div>
+              </div>
+            </div>
+            <div class="testimonial-card">
+              <div class="testimonial-card__stars">★★★★★</div>
+              <p class="testimonial-card__text">"O plano realmente se encaixou na minha rotina corrida. Hoje me sinto mais saudável e menos ansiosa com alimentação."</p>
+              <div class="testimonial-card__author">
+                <div class="testimonial-card__avatar">J</div>
+                <div>
+                  <strong>Juliana,</strong>
+                  <p>35 anos</p>
+                </div>
+              </div>
+            </div>
+            <div class="testimonial-card">
+              <div class="testimonial-card__stars">★★★★★</div>
+              <p class="testimonial-card__text">"Com a NutriVida aprendi a comer sem medo e sem culpa. Pela primeira vez, emagreci sem sentir que estava de dieta."</p>
+              <div class="testimonial-card__author">
+                <div class="testimonial-card__avatar">M</div>
+                <div>
+                  <strong>Mariana,</strong>
+                  <p>34 anos</p>
+                </div>
+              </div>
+            </div>
+            <div class="testimonial-card">
+              <div class="testimonial-card__stars">★★★★★</div>
+              <p class="testimonial-card__text">"Minha relação com a comida mudou completamente. Hoje como com prazer e sem culpa, e os resultados apareceram naturalmente."</p>
+              <div class="testimonial-card__author">
+                <div class="testimonial-card__avatar">F</div>
+                <div>
+                  <strong>Fernanda,</strong>
+                  <p>29 anos</p>
+                </div>
+              </div>
+            </div>
+            <div class="testimonial-card">
+              <div class="testimonial-card__stars">★★★★★</div>
+              <p class="testimonial-card__text">"Depois de tantas dietas frustradas, finalmente encontrei um acompanhamento que respeita meu corpo e meu ritmo."</p>
+              <div class="testimonial-card__author">
+                <div class="testimonial-card__avatar">R</div>
+                <div>
+                  <strong>Renata,</strong>
+                  <p>38 anos</p>
+                </div>
+              </div>
+            </div>
+            <div class="testimonial-card">
+              <div class="testimonial-card__stars">★★★★★</div>
+              <p class="testimonial-card__text">"O atendimento é incrível. Me senti acolhida desde a primeira consulta. Já indiquei para todas as minhas amigas!"</p>
+              <div class="testimonial-card__author">
+                <div class="testimonial-card__avatar">A</div>
+                <div>
+                  <strong>Amanda,</strong>
+                  <p>32 anos</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Blog Section -->
+  <section class="section section--light" id="blog">
+    <div class="container">
+      <div class="section__header fade-in">
+        <span class="section__tag">Blog</span>
+        <h2 class="section__title">Dicas e artigos sobre nutrição</h2>
+        <p class="section__subtitle">Conteúdo de qualidade para você cuidar da sua alimentação no dia a dia.</p>
+      </div>
+      <div class="blog__grid fade-in">
+        <!-- Linha superior - 2 cards grandes -->
+        <article class="blog-card blog-card--large">
+          <div class="blog-card__image">
+            <div class="blog-card__image-placeholder">
+              <span class="blog-card__placeholder-icon"><i class="ph ph-camera"></i></span>
+              <p>Sua foto aqui</p>
+              <span class="blog-card__placeholder-hint">Substitua por uma imagem real</span>
+            </div>
+            <div class="blog-card__overlay">
+              <span class="blog-card__category">Emagrecimento</span>
+              <h3 class="blog-card__title">Como Emagrecer de Forma Saudável: 7 Dicas para Perder Peso Sem Sofrimento</h3>
+              <time class="blog-card__date">14/05/2025</time>
+            </div>
+          </div>
+        </article>
+        <article class="blog-card blog-card--large">
+          <div class="blog-card__image">
+            <div class="blog-card__image-placeholder">
+              <span class="blog-card__placeholder-icon"><i class="ph ph-camera"></i></span>
+              <p>Sua foto aqui</p>
+              <span class="blog-card__placeholder-hint">Substitua por uma imagem real</span>
+            </div>
+            <div class="blog-card__overlay">
+              <span class="blog-card__category">Compulsão Alimentar</span>
+              <h3 class="blog-card__title">Alimentos que Aceleram o Metabolismo e Ajudam no Emagrecimento</h3>
+              <time class="blog-card__date">14/05/2025</time>
+            </div>
+          </div>
+        </article>
+        <!-- Linha inferior - 3 cards menores -->
+        <article class="blog-card blog-card--small">
+          <div class="blog-card__image">
+            <div class="blog-card__image-placeholder">
+              <span class="blog-card__placeholder-icon"><i class="ph ph-camera"></i></span>
+              <p>Sua foto aqui</p>
+              <span class="blog-card__placeholder-hint">Substitua por uma imagem real</span>
+            </div>
+            <div class="blog-card__overlay">
+              <span class="blog-card__category">Emagrecimento</span>
+              <h3 class="blog-card__title">Compulsão Alimentar: Como Controlar a Vontade Exagerada de Comer</h3>
+              <time class="blog-card__date">14/05/2025</time>
+            </div>
+          </div>
+        </article>
+        <article class="blog-card blog-card--small">
+          <div class="blog-card__image">
+            <div class="blog-card__image-placeholder">
+              <span class="blog-card__placeholder-icon"><i class="ph ph-camera"></i></span>
+              <p>Sua foto aqui</p>
+              <span class="blog-card__placeholder-hint">Substitua por uma imagem real</span>
+            </div>
+            <div class="blog-card__overlay">
+              <span class="blog-card__category">Emagrecimento</span>
+              <h3 class="blog-card__title">O Que Comer à Noite para Emagrecer Sem Passar Fome</h3>
+              <time class="blog-card__date">14/05/2025</time>
+            </div>
+          </div>
+        </article>
+        <article class="blog-card blog-card--small">
+          <div class="blog-card__image">
+            <div class="blog-card__image-placeholder">
+              <span class="blog-card__placeholder-icon"><i class="ph ph-camera"></i></span>
+              <p>Sua foto aqui</p>
+              <span class="blog-card__placeholder-hint">Substitua por uma imagem real</span>
+            </div>
+            <div class="blog-card__overlay">
+              <span class="blog-card__category">Emagrecimento</span>
+              <h3 class="blog-card__title">Dieta ou Reeducação Alimentar: Qual é Melhor para Emagrecer?</h3>
+              <time class="blog-card__date">14/05/2025</time>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="section section--beige" id="faq">
+    <div class="container">
+      <div class="faq__grid fade-in">
+        <!-- Coluna esquerda - Info -->
+        <div class="faq__info">
+          <span class="section__tag"><i class="ph ph-question"></i> FAQ</span>
+          <h2 class="faq__title">Perguntas <em>Frequentes</em></h2>
+          <p class="faq__description">Encontre aqui as respostas para as perguntas mais comuns sobre o atendimento e o método da Dra. Camila Rodrigues.</p>
+        </div>
+        <!-- Coluna direita - Perguntas -->
+        <div class="faq__list">
+          <div class="faq__item">
+            <button class="faq__question" aria-expanded="false">
+              <span class="faq__icon">+</span>
+              <span>Como funciona o atendimento com a Dra. Camila Rodrigues?</span>
+            </button>
+            <div class="faq__answer">
+              <p>A Dra. Camila realiza uma avaliação completa do seu histórico de saúde, rotina e objetivos. Com base nisso, ela cria um plano alimentar personalizado que respeita suas preferências e necessidades. O acompanhamento é contínuo, com ajustes conforme sua evolução.</p>
+            </div>
+          </div>
+          <div class="faq__item">
+            <button class="faq__question" aria-expanded="false">
+              <span class="faq__icon">+</span>
+              <span>Preciso cortar todos os alimentos que gosto para emagrecer?</span>
+            </button>
+            <div class="faq__answer">
+              <p>Não! O método da Dra. Camila é baseado em reeducação alimentar, sem restrições extremas. Você aprenderá a fazer escolhas mais saudáveis sem abrir mão do prazer de comer.</p>
+            </div>
+          </div>
+          <div class="faq__item">
+            <button class="faq__question" aria-expanded="false">
+              <span class="faq__icon">+</span>
+              <span>Em quanto tempo verei resultados?</span>
+            </button>
+            <div class="faq__answer">
+              <p>Os primeiros resultados costumam aparecer nas primeiras semanas de acompanhamento. No entanto, cada organismo responde de forma diferente. O foco é uma mudança sustentável e duradoura.</p>
+            </div>
+          </div>
+          <div class="faq__item">
+            <button class="faq__question" aria-expanded="false">
+              <span class="faq__icon">+</span>
+              <span>O plano alimentar é difícil de seguir?</span>
+            </button>
+            <div class="faq__answer">
+              <p>O plano é totalmente personalizado e adaptado à sua rotina, preferências e orçamento. O objetivo é que seja prático e prazeroso, para que você consiga manter a longo prazo.</p>
+            </div>
+          </div>
+          <div class="faq__item">
+            <button class="faq__question" aria-expanded="false">
+              <span class="faq__icon">+</span>
+              <span>O método é indicado para quem já tentou várias dietas sem sucesso?</span>
+            </button>
+            <div class="faq__answer">
+              <p>Sim! Muitas pacientes chegam com histórico de dietas restritivas e efeito sanfona. O método da Dra. Camila foca em mudança de comportamento e hábitos, garantindo resultados duradouros.</p>
+            </div>
+          </div>
+          <div class="faq__item">
+            <button class="faq__question" aria-expanded="false">
+              <span class="faq__icon">+</span>
+              <span>O atendimento é presencial ou online?</span>
+            </button>
+            <div class="faq__answer">
+              <p>Ofereço atendimento tanto presencial em Vitória - ES quanto online por videoconferência, com a mesma qualidade e dedicação. O plano alimentar é enviado digitalmente.</p>
+            </div>
+          </div>
+          <div class="faq__item">
+            <button class="faq__question" aria-expanded="false">
+              <span class="faq__icon">+</span>
+              <span>Como faço para agendar uma consulta?</span>
+            </button>
+            <div class="faq__answer">
+              <p>Você pode agendar sua consulta pelo WhatsApp, telefone ou pelo formulário de contato do site. Respondemos rapidamente e encontramos o melhor horário para você.</p>
+            </div>
+          </div>
+          <div class="faq__cta">
+            <i class="ph ph-whatsapp-logo"></i>
+            <p>Ainda tem dúvidas? <strong>Entre em contato conosco e vamos te ajudar a iniciar sua transformação!</strong></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="section section--cta">
+    <div class="container">
+      <div class="cta__wrapper fade-in">
+        <div class="cta__content">
+          <h2 class="cta__title">Pronto para transformar sua alimentação?</h2>
+          <p class="cta__text">Agende sua primeira consulta e dê o primeiro passo rumo a uma vida mais saudável. Estou esperando por você em Vitória!</p>
+          <div class="cta__actions">
+            <a href="#contato" class="btn btn--white btn--lg">Agendar Consulta <span class="btn__arrow"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.29 6.71a1 1 0 0 0 0 1.41L13.17 12l-3.88 3.88a1 1 0 1 0 1.42 1.41l4.59-4.59a1 1 0 0 0 0-1.41L10.71 6.7a1 1 0 0 0-1.42.01z"/></svg></span></a>
+            <a href="https://wa.me/5527999999999" class="btn btn--outline-white btn--lg" target="_blank" rel="noopener">WhatsApp <span class="btn__arrow"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.29 6.71a1 1 0 0 0 0 1.41L13.17 12l-3.88 3.88a1 1 0 1 0 1.42 1.41l4.59-4.59a1 1 0 0 0 0-1.41L10.71 6.7a1 1 0 0 0-1.42.01z"/></svg></span></a>
+          </div>
+        </div>
+        <div class="cta__image">
+          <img src="foto-prato.avif" alt="Prato saudável com alimentos nutritivos" class="cta__plate">
+        </div>
+        <!-- Botão mobile only CTA -->
+        <a href="#contato" class="btn btn--white btn--lg cta__mobile-btn">Agendar Consulta <span class="btn__arrow"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.29 6.71a1 1 0 0 0 0 1.41L13.17 12l-3.88 3.88a1 1 0 1 0 1.42 1.41l4.59-4.59a1 1 0 0 0 0-1.41L10.71 6.7a1 1 0 0 0-1.42.01z"/></svg></span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Localização Section -->
+  <section class="section section--light" id="contato">
+    <div class="container">
+      <div class="location__header fade-in">
+        <span class="section__tag">LOCALIZAÇÃO</span>
+        <h2 class="location__title">Veja onde estamos</h2>
+      </div>
+      <div class="location__content fade-in">
+        <div class="location__map">
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3741.7!2d-40.2922!3d-20.2976!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjDCsDE3JzUxLjQiUyA0MMKwMTcnMzEuOSJX!5e0!3m2!1spt-BR!2sbr!4v1" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Localização Dra. Camila Rodrigues"></iframe>
+        </div>
+        <div class="location__footer">
+          <div class="location__info-items">
+            <div class="location__info-item">
+              <span class="location__info-icon"><i class="ph ph-calendar-check"></i></span>
+              <div>
+                <span>Segunda à Sábado:</span>
+                <span>09h00 às 18h30</span>
+              </div>
+            </div>
+            <div class="location__info-item">
+              <span class="location__info-icon"><i class="ph ph-map-pin"></i></span>
+              <div>
+                <span>Rua Aleixo Netto, 1205</span>
+                <span>Sala 301</span>
+              </div>
+            </div>
+          </div>
+          <a href="https://wa.me/5527999999999" class="location__cta-btn" target="_blank" rel="noopener">
+            AGENDAR CONSULTA
+            <span class="location__cta-icon"><i class="ph ph-whatsapp-logo"></i></span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__grid">
+        <div class="footer__brand">
+          <a href="#" class="footer__logo">
+            <span class="logo-icon"><i class="ph ph-leaf"></i></span>
+            <span class="logo-text">Nutri<strong>Vida</strong> ES</span>
+          </a>
+          <p class="footer__description">Dra. Camila Rodrigues - Nutricionista em Vitória, Espírito Santo. Transformando vidas através da alimentação saudável desde 2014.</p>
+          <div class="footer__social">
+            <a href="https://wa.me/5527999999999" class="footer__social-link" aria-label="WhatsApp" target="_blank" rel="noopener"><i class="ph ph-whatsapp-logo"></i></a>
+            <a href="#" class="footer__social-link" aria-label="Instagram"><i class="ph ph-instagram-logo"></i></a>
+            <a href="#" class="footer__social-link" aria-label="TikTok"><i class="ph ph-tiktok-logo"></i></a>
+            <a href="#" class="footer__social-link" aria-label="Facebook"><i class="ph ph-facebook-logo"></i></a>
+          </div>
+        </div>
+        <div class="footer__links">
+          <h4 class="footer__heading">Links Rápidos</h4>
+          <ul>
+            <li><a href="#inicio">Início</a></li>
+            <li><a href="#sobre">Sobre Nós</a></li>
+            <li><a href="#servicos">Serviços</a></li>
+            <li><a href="#blog">Blog</a></li>
+            <li><a href="#contato">Contato</a></li>
+          </ul>
+        </div>
+        <div class="footer__links">
+          <h4 class="footer__heading">Especialidades</h4>
+          <ul>
+            <li><a href="#servicos">Plano Alimentar Personalizado</a></li>
+            <li><a href="#servicos">Reeducação Alimentar</a></li>
+            <li><a href="#servicos">Controle de Compulsão Alimentar</a></li>
+            <li><a href="#servicos">Nutrição para Acelerar o Metabolismo</a></li>
+            <li><a href="#servicos">Ganho de Massa Magra</a></li>
+            <li><a href="#servicos">Nutrição Comportamental</a></li>
+          </ul>
+        </div>
+        <div class="footer__contact">
+          <h4 class="footer__heading">Contato</h4>
+          <p><i class="ph ph-map-pin"></i> Praia do Canto, Vitória - ES</p>
+          <p><i class="ph ph-phone"></i> (27) 3345-6789</p>
+          <p><i class="ph ph-whatsapp-logo"></i> (27) 99999-9999</p>
+          <p><i class="ph ph-envelope-simple"></i> contato@nutrivida.es.br</p>
+        </div>
+      </div>
+      <div class="footer__bottom">
+        <p>&copy; 2026 NutriVida ES. Todos os direitos reservados.</p>
+        <a href="https://www.instagram.com/andersonjrofc/" class="footer__dev-link" target="_blank" rel="noopener">
+          Desenvolvido Por <img src="Logo-Sem-Fundo-1.png" alt="AnalisCode" class="footer__dev-logo"> <span class="footer__dev-name">Analis<strong>Code</strong></span>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Modal Aviso -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal">
+      <div class="modal__icon">
+        <i class="ph ph-info"></i>
+      </div>
+      <h3 class="modal__title">Site <em>Demonstrativo</em></h3>
+      <p class="modal__text">Este site é uma versão ilustrativa criada para apresentar o layout e a estrutura do projeto. Todos os textos, imagens e informações exibidos são fictícios e serão substituídos pelo conteúdo real do seu negócio.</p>
+      <button class="modal__btn" id="modal-close">
+        Entendi, quero ver o site
+        <span class="modal__btn-arrow"><i class="ph ph-arrow-right"></i></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- WhatsApp Float Button -->
+  <a href="https://wa.me/5527999999999" class="whatsapp-float" target="_blank" rel="noopener" aria-label="Fale conosco no WhatsApp">
+    <span class="whatsapp-float__icon"><i class="ph ph-whatsapp-logo"></i></span>
+    <span class="whatsapp-float__text">WhatsApp</span>
+  </a>
+
+  <!-- Back to top -->
+  <button class="back-to-top" id="back-to-top" aria-label="Voltar ao topo"><i class="ph ph-caret-up"></i></button>
+
+  <script src="/templates/nutricionista/js/main.js"></script>
+</body>
+</html>

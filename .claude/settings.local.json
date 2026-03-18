@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(where php:*)",
+      "Bash(where mysql:*)",
+      "Bash(where xampp:*)",
+      "Read(//c/xampp/**)",
+      "Read(//c//**)",
+      "mcp__Claude_Preview__preview_start"
+    ]
+  }
+}

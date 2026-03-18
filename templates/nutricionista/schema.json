@@ -1,0 +1,132 @@
+{
+  "steps": [
+    {
+      "id": "negocio",
+      "title": "Sobre seu Negocio",
+      "description": "Informacoes basicas sobre voce e seu negocio",
+      "fields": [
+        { "key": "brand.name", "label": "Nome do seu negocio/clinica", "type": "text", "required": true, "placeholder": "Ex: NutriVida ES" },
+        { "key": "brand.tagline", "label": "Slogan ou frase curta", "type": "text", "placeholder": "Ex: Nutricao de qualidade no coracao de Vitoria" },
+        { "key": "professional.crn", "label": "Registro profissional (CRN, CRO, OAB...)", "type": "text" },
+        {
+          "key": "services.items",
+          "label": "Lista dos seus Servicos",
+          "type": "list",
+          "minItems": 3,
+          "maxItems": 6,
+          "itemFields": [
+            { "key": "title", "label": "Nome do servico", "type": "text", "required": true },
+            { "key": "description", "label": "Descricao breve", "type": "textarea", "maxLength": 150 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fotos",
+      "title": "Imagens e Midia",
+      "description": "Sobre as imagens que serao usadas no seu site",
+      "fields": [
+        { "key": "brand.logo", "label": "Logo (se tiver)", "type": "image", "required": false, "hint": "PNG com fundo transparente, min 200x200px" },
+        { "key": "images.has_bank", "label": "Possui banco de imagens que possamos utilizar?", "type": "toggle", "on_field": { "key": "images.bank_link", "label": "Link do banco de imagens", "type": "url", "placeholder": "Ex: https://drive.google.com/..." }, "off_text": "Sem problemas! O desenvolvedor utilizara Inteligencia Artificial para criar as composicoes graficas do seu site." }
+      ]
+    },
+    {
+      "id": "sobre",
+      "title": "Sobre Voce",
+      "description": "Conte um pouco sobre sua trajetoria",
+      "fields": [
+        { "key": "professional.name", "label": "Seu nome completo", "type": "text", "required": true },
+        { "key": "about.bio", "label": "Sua historia profissional", "type": "textarea", "required": true, "placeholder": "Conte sobre sua formacao, experiencia, e o que te motiva...", "maxLength": 500 },
+        { "key": "about.experience_years", "label": "Anos de experiencia", "type": "number" },
+        { "key": "about.patients_count", "label": "Numero aprox. de pacientes atendidos", "type": "number" },
+        { "key": "about.approval_rate", "label": "Percentual medio de aprovacao dos clientes", "type": "number", "placeholder": "Ex: 98" },
+        {
+          "key": "about.differentials",
+          "label": "Seus 3 principais diferenciais",
+          "type": "list",
+          "maxItems": 3,
+          "itemFields": [
+            { "key": "title", "label": "Diferencial", "type": "text" },
+            { "key": "description", "label": "Breve descricao", "type": "text" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "depoimentos",
+      "title": "Depoimentos de Clientes",
+      "description": "Depoimentos reais de seus clientes (importante para credibilidade!)",
+      "fields": [
+        {
+          "key": "testimonials",
+          "label": "Depoimentos",
+          "type": "list",
+          "minItems": 3,
+          "maxItems": 6,
+          "itemFields": [
+            { "key": "name", "label": "Nome do cliente", "type": "text", "required": true },
+            { "key": "detail", "label": "Detalhe (idade, profissao)", "type": "text" },
+            { "key": "text", "label": "O que o cliente disse", "type": "textarea", "required": true }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "faq",
+      "title": "Perguntas Frequentes",
+      "description": "Perguntas que seus clientes costumam fazer",
+      "fields": [
+        {
+          "key": "faq",
+          "label": "Perguntas e Respostas",
+          "type": "list",
+          "minItems": 4,
+          "maxItems": 8,
+          "suggest": {
+            "label": "Me de sugestoes",
+            "info_text": "Sem problemas! O desenvolvedor utilizara perguntas e respostas padroes para as proximas avaliacoes."
+          },
+          "itemFields": [
+            { "key": "question", "label": "Pergunta", "type": "text", "required": true },
+            { "key": "answer", "label": "Resposta", "type": "textarea", "required": true }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "contato",
+      "title": "Contato e Localizacao",
+      "description": "Como seus clientes podem te encontrar",
+      "fields": [
+        { "key": "contact.whatsapp", "label": "WhatsApp (com DDD)", "type": "tel", "required": true, "placeholder": "(27) 99999-9999" },
+        { "key": "contact.email", "label": "Email profissional", "type": "email" },
+        { "key": "contact.address", "label": "Endereco completo", "type": "text", "required": true },
+        { "key": "contact.hours", "label": "Horario de atendimento", "type": "text", "placeholder": "Ex: Segunda a Sexta, 08h as 18h" }
+      ]
+    },
+    {
+      "id": "redes",
+      "title": "Redes Sociais",
+      "description": "Links das suas redes sociais",
+      "fields": [
+        { "key": "social.instagram", "label": "Instagram", "type": "url", "placeholder": "https://instagram.com/seu_perfil" },
+        { "key": "social.facebook", "label": "Facebook", "type": "url" },
+        { "key": "social.tiktok", "label": "TikTok", "type": "url" },
+        { "key": "social.youtube", "label": "YouTube", "type": "url" }
+      ]
+    },
+    {
+      "id": "preferencias",
+      "title": "Preferencias Visuais",
+      "description": "Nos ajude a entender seu estilo",
+      "fields": [
+        { "key": "preferences.color_method", "label": "Como deseja definir a cor principal?", "type": "choice", "options": ["Subir Identidade Visual", "Escolher cor manualmente", "Cores padrao"] },
+        { "key": "preferences.color_iv", "label": "Identidade Visual", "type": "file-or-link", "accept": ".pdf,image/*", "link_key": "preferences.color_iv_link", "link_placeholder": "Ex: https://drive.google.com/...", "conditional": "preferences.color_method=Subir Identidade Visual" },
+        { "key": "preferences.color_picker", "label": "Escolha a cor", "type": "color", "conditional": "preferences.color_method=Escolher cor manualmente" },
+        { "key": "preferences.color", "label": "Cor principal de preferencia", "type": "color-choice", "options": ["Verde", "Azul", "Rosa", "Roxo", "Laranja", "Dourado", "Outra"], "conditional": "preferences.color_method=Cores padrao" },
+        { "key": "preferences.color_custom", "label": "Se outra, qual cor?", "type": "text", "conditional": "preferences.color=Outra" },
+        { "key": "preferences.notes", "label": "Observacoes adicionais", "type": "textarea", "placeholder": "Algo mais que gostaria de nos dizer sobre o site?" }
+      ]
+    }
+  ]
+}
