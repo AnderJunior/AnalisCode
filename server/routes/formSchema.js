@@ -29,6 +29,13 @@ router.get('/', async (req, res) => {
   }
   const schema = JSON.parse(fs.readFileSync(schemaFile, 'utf8'));
 
+  // Track form link open (only first time)
+  if (!client.form_opened_at) {
+    try {
+      await db.execute('UPDATE clients SET form_opened_at = NOW() WHERE token = ? AND form_opened_at IS NULL', [token]);
+    } catch (e) { /* column might not exist yet */ }
+  }
+
   const [uploads] = await db.execute('SELECT * FROM uploads WHERE client_token = ?', [token]);
   const uploadsMap = {};
   for (const u of uploads) {
@@ -36,7 +43,7 @@ router.get('/', async (req, res) => {
   }
 
   res.json({
-    client: { name: client.name, status: client.status, template_name: client.template_name },
+    client: { name: client.name, status: client.status, template_name: client.template_name, form_opened_at: client.form_opened_at },
     schema,
     form_data: client.form_data ? (typeof client.form_data === 'string' ? JSON.parse(client.form_data) : client.form_data) : null,
     uploads: uploadsMap,

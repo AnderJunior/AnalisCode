@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import {
   Users, Plus, X, Copy, Check, ChevronRight,
   Loader2, AlertCircle, UserPlus, Search, Trash2,
-  List, LayoutGrid, GripVertical, Clock
+  List, LayoutGrid, GripVertical, Clock, Eye, EyeOff
 } from 'lucide-react'
 import { DndContext, DragOverlay, useDraggable, useDroppable, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
 import AdminLayout from '../../components/AdminLayout.jsx'
@@ -66,6 +66,18 @@ function KanbanCard({ client, onClick }) {
         </div>
         <GripVertical className="w-3.5 h-3.5 text-gray-300 flex-shrink-0 mt-0.5" />
       </div>
+      {client.form_opened_at && (
+        <div className="flex items-center gap-1 mt-2 px-2 py-1 bg-green-50 rounded-md">
+          <Eye className="w-3 h-3 text-green-500" />
+          <span className="text-[10px] text-green-600 font-medium">Link aberto</span>
+        </div>
+      )}
+      {!client.form_opened_at && client.status === 'formulario_pendente' && (
+        <div className="flex items-center gap-1 mt-2 px-2 py-1 bg-gray-50 rounded-md">
+          <EyeOff className="w-3 h-3 text-gray-400" />
+          <span className="text-[10px] text-gray-400 font-medium">Não abriu o link</span>
+        </div>
+      )}
       <div className="flex items-center justify-between mt-3 pt-2.5 border-t border-gray-50">
         <span className="text-[10px] text-gray-400 font-medium">{client.template_name || '—'}</span>
         <span className="inline-flex items-center gap-1 text-[10px] text-gray-400">
@@ -484,6 +496,7 @@ export default function Clients() {
                 <th className="px-6 py-3 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Nome</th>
                 <th className="px-6 py-3 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Status</th>
                 <th className="px-6 py-3 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Template</th>
+                <th className="px-6 py-3 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Link</th>
                 <th className="px-6 py-3 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Criado em</th>
                 <th className="px-6 py-3 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Ações</th>
               </tr>
@@ -505,6 +518,17 @@ export default function Clients() {
                   <td className="px-6 py-3.5">
                     <p className="text-sm text-gray-500">{client.template_name || '—'}</p>
                     {client.niche && <p className="text-xs text-gray-400 mt-0.5">{client.niche}</p>}
+                  </td>
+                  <td className="px-6 py-3.5">
+                    {client.form_opened_at ? (
+                      <span className="inline-flex items-center gap-1 text-xs text-green-600 bg-green-50 px-2 py-0.5 rounded-full">
+                        <Eye className="w-3 h-3" /> Abriu
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 text-xs text-gray-400 bg-gray-50 px-2 py-0.5 rounded-full">
+                        <EyeOff className="w-3 h-3" /> Não abriu
+                      </span>
+                    )}
                   </td>
                   <td className="px-6 py-3.5 text-sm text-gray-400">
                     {formatDate(client.created_at)}

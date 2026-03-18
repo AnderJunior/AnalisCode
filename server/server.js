@@ -50,10 +50,14 @@ app.use('/form', require('./routes/form'));
 // Auto-migrations
 const { getDB } = require('./db');
 (async () => {
-  try {
-    const db = getDB();
-    await db.execute("ALTER TABLE revisions MODIFY COLUMN type ENUM('submit','revision_request','approval','publish') NOT NULL");
-  } catch {}
+  const db = getDB();
+  const migrations = [
+    "ALTER TABLE revisions MODIFY COLUMN type ENUM('submit','revision_request','approval','publish') NOT NULL",
+    "ALTER TABLE clients ADD COLUMN form_opened_at TIMESTAMP NULL DEFAULT NULL",
+  ];
+  for (const sql of migrations) {
+    try { await db.execute(sql); } catch {}
+  }
 })();
 
 // Serve frontend in production
