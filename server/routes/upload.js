@@ -57,7 +57,17 @@ router.post('/', upload.single('file'), async (req, res) => {
   if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
   const dest = path.join(uploadDir, filename);
-  fs.renameSync(req.file.path, dest);
+  // Use copy+unlink instead of rename to support cross-device (Docker volumes)
+  try {
+    fs.renameSync(req.file.path, dest);
+  } catch (e) {
+    if (e.code === 'EXDEV') {
+      fs.copyFileSync(req.file.path, dest);
+      fs.unlinkSync(req.file.path);
+    } else {
+      throw e;
+    }
+  }
 
   // Record in DB
   await db.execute(
