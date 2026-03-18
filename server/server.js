@@ -7,6 +7,11 @@ const config = require('./config');
 
 const app = express();
 
+// Trust proxy (behind Traefik/Nginx)
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1);
+}
+
 // CORS
 const allowedOrigins = process.env.NODE_ENV === 'production'
   ? [process.env.APP_URL || 'https://sites.analiscode.com']
