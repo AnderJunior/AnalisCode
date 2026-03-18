@@ -8,8 +8,11 @@ const config = require('./config');
 const app = express();
 
 // CORS
+const allowedOrigins = process.env.NODE_ENV === 'production'
+  ? [process.env.APP_URL || 'https://sites.analiscode.com']
+  : ['http://localhost:5173', 'http://localhost:5174'];
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:5174'],
+  origin: allowedOrigins,
   credentials: true,
 }));
 
@@ -47,6 +50,17 @@ const { getDB } = require('./db');
     await db.execute("ALTER TABLE revisions MODIFY COLUMN type ENUM('submit','revision_request','approval','publish') NOT NULL");
   } catch {}
 })();
+
+// Serve frontend in production
+const frontendDist = path.join(__dirname, '..', 'frontend', 'dist');
+const fs = require('fs');
+if (fs.existsSync(frontendDist)) {
+  app.use(express.static(frontendDist));
+  // SPA fallback — all non-API routes serve index.html
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(frontendDist, 'index.html'));
+  });
+}
 
 // Global error handler
 app.use((err, req, res, next) => {

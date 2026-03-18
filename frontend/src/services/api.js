@@ -193,9 +193,9 @@ export function getPreviewUrl(token) {
 }
 
 export function getFormUrl(token) {
-  return `http://localhost:5173/preencher/${token}`
+  return `${window.location.origin}/preencher/${token}`
 }
 
 export function getReviewUrl(reviewToken) {
-  return `http://localhost:5173/aprovar/${reviewToken}`
+  return `${window.location.origin}/aprovar/${reviewToken}`
 }
