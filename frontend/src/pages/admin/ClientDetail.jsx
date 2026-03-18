@@ -246,7 +246,7 @@ function FieldValue({ label, value }) {
   if (value === null || value === undefined || value === '') return null
 
   if (isImagePath(value)) {
-    const src = `http://localhost:3000/${value}`
+    const src = `/${value}`
     const filename = value.split('/').pop()
     return (
       <div className="py-2">
@@ -286,8 +286,8 @@ function FieldValue({ label, value }) {
                       <span className="text-gray-400 flex-shrink-0 min-w-[80px]">{t(k)}</span>
                       {isImagePath(v) ? (
                         <div className="relative group inline-block">
-                          <img src={`http://localhost:3000/${v}`} alt={k} className="h-16 w-auto rounded object-cover border border-gray-100" onError={(e) => { e.target.style.display='none' }} />
-                          <a href={`http://localhost:3000/${v}`} download={v.split('/').pop()} onClick={(e) => e.stopPropagation()} className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded" title="Baixar">
+                          <img src={`/${v}`} alt={k} className="h-16 w-auto rounded object-cover border border-gray-100" onError={(e) => { e.target.style.display='none' }} />
+                          <a href={`/${v}`} download={v.split('/').pop()} onClick={(e) => e.stopPropagation()} className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded" title="Baixar">
                             <Download className="w-4 h-4 text-white" />
                           </a>
                         </div>
@@ -636,7 +636,7 @@ function ZipUploader({ client, revisions }) {
   const [error, setError] = useState('')
   const [previewKey, setPreviewKey] = useState(0)
   const previewUrl = api.getPreviewUrl(client.token)
-  const customSiteUrl = `http://localhost:3000/sites/${client.token}/index.html`
+  const customSiteUrl = `${window.location.origin}/sites/${client.token}/index.html`
 
   const formatDate = (d) => new Date(d).toLocaleDateString('pt-BR', {
     day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'

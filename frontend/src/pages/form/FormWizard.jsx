@@ -927,14 +927,14 @@ export default function FormWizard() {
   if (hasFilled && !isEditing && !submitted) {
     const statusInfo = STATUS_INFO[status] || STATUS_INFO.formulario_preenchido
     const showSplitPreview = status !== 'formulario_preenchido'
-    const previewUrl = `http://localhost:3000/api/preview.php?token=${token}`
+    const previewUrl = `/api/preview.php?token=${token}`
 
     const renderValue = (val) => {
       if (val === null || val === undefined || val === '') return null
 
       const isImg = typeof val === 'string' && (val.startsWith('uploads/') || /\.(jpg|png|webp|avif)$/i.test(val))
       if (isImg) {
-        return <img src={`http://localhost:3000/${val}`} alt="" className="h-20 w-auto rounded-lg object-cover border border-gray-100 mt-1" />
+        return <img src={`/${val}`} alt="" className="h-20 w-auto rounded-lg object-cover border border-gray-100 mt-1" />
       }
 
       if (Array.isArray(val)) {
@@ -951,7 +951,7 @@ export default function FormWizard() {
                         <div key={k} className="flex gap-2 text-sm">
                           <span className="text-gray-400 flex-shrink-0 w-28 capitalize">{SUB_LABELS[k] || k.replace(/_/g, ' ')}</span>
                           {subIsImg
-                            ? <img src={`http://localhost:3000/${v}`} alt={k} className="h-12 w-auto rounded object-cover border border-gray-100" />
+                            ? <img src={`/${v}`} alt={k} className="h-12 w-auto rounded object-cover border border-gray-100" />
                             : <span className="text-gray-700 break-words">{String(v)}</span>
                           }
                         </div>
