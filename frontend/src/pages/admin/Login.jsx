@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { User, Lock, AlertCircle, Loader2 } from 'lucide-react'
+import logoLetreiro from '../../assets/logo-letreiro.png'
 import { useAuth } from '../../contexts/AuthContext.jsx'
 
 export default function Login() {
@@ -44,12 +45,7 @@ export default function Login() {
       {/* Left panel */}
       <div className="hidden lg:flex lg:w-1/2 bg-primary-600 flex-col justify-between p-12">
         <div>
-          <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
-            <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 9h16.5m-16.5 6.75h16.5" />
-            </svg>
-          </div>
-          <p className="text-white/80 text-sm font-medium mt-3">AnalisCode</p>
+          <span className="text-white font-bold text-lg">AnalisCode</span>
         </div>
         <div>
           <h2 className="text-3xl font-bold text-white leading-snug">

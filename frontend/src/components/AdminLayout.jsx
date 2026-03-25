@@ -1,6 +1,7 @@
 import { useNavigate, useLocation } from 'react-router-dom'
 import { LayoutDashboard, LogOut, ChevronRight, Users, Layout } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext.jsx'
+import logoLetreiro from '../assets/logo-letreiro.png'
 
 const NAV_SECTIONS = [
   {
@@ -38,13 +39,8 @@ export default function AdminLayout({ children, title, actions }) {
       {/* Sidebar */}
       <aside className="w-60 flex flex-col bg-white border-r border-gray-100 flex-shrink-0">
         {/* Logo */}
-        <div className="flex items-center gap-2.5 px-5 h-14 border-b border-gray-100">
-          <div className="w-6 h-6 bg-primary-600 rounded flex items-center justify-center flex-shrink-0">
-            <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 9h16.5m-16.5 6.75h16.5" />
-            </svg>
-          </div>
-          <span className="text-gray-900 font-semibold text-sm">AnalisCode</span>
+        <div className="flex items-center px-4 h-14 border-b border-gray-100">
+          <img src={logoLetreiro} alt="AnalisCode" className="h-8 w-auto object-contain" />
         </div>
 
         {/* Navigation */}
