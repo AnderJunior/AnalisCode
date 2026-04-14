@@ -6,6 +6,7 @@ import Dashboard from './pages/admin/Dashboard.jsx'
 import ClientDetail from './pages/admin/ClientDetail.jsx'
 import Clients from './pages/admin/Clients.jsx'
 import Templates from './pages/admin/Templates.jsx'
+import Workspace from './pages/admin/Workspace.jsx'
 import FormWizard from './pages/form/FormWizard.jsx'
 import ReviewPage from './pages/review/ReviewPage.jsx'
 
@@ -31,6 +32,10 @@ export default function App() {
           <Route
             path="/admin/templates"
             element={<ProtectedRoute><Templates /></ProtectedRoute>}
+          />
+          <Route
+            path="/admin/workspace"
+            element={<ProtectedRoute><Workspace /></ProtectedRoute>}
           />
           <Route
             path="/admin/cliente/:id"
