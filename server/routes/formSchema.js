@@ -22,7 +22,7 @@ router.get('/', async (req, res) => {
 
   // Priority: custom form > template schema > default schema
   if (client.form_id) {
-    const [formRows] = await db.execute('SELECT schema FROM forms WHERE id = ?', [client.form_id]);
+    const [formRows] = await db.execute('SELECT `schema` FROM forms WHERE id = ?', [client.form_id]);
     if (formRows.length && formRows[0].schema) {
       schema = typeof formRows[0].schema === 'string' ? JSON.parse(formRows[0].schema) : formRows[0].schema;
     }

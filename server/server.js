@@ -46,6 +46,7 @@ app.use('/api/approve.php', require('./routes/approve'));
 app.use('/api/template-preview.php', require('./routes/templatePreview'));
 app.use('/api/templates', require('./routes/templates'));
 app.use('/api/forms', require('./routes/forms'));
+app.use('/api/kanban-columns', require('./routes/kanbanColumns'));
 app.use('/form', require('./routes/form'));
 
 // Auto-migrations
@@ -57,6 +58,9 @@ const { getDB } = require('./db');
     "ALTER TABLE clients ADD COLUMN form_opened_at TIMESTAMP NULL DEFAULT NULL",
     "CREATE TABLE IF NOT EXISTS forms (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255) NOT NULL, description TEXT, schema JSON, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP)",
     "ALTER TABLE clients ADD COLUMN form_id INT NULL DEFAULT NULL",
+    "ALTER TABLE clients MODIFY COLUMN status VARCHAR(100) DEFAULT 'formulario_pendente'",
+    "ALTER TABLE clients MODIFY COLUMN template_id INT NULL DEFAULT NULL",
+    "CREATE TABLE IF NOT EXISTS kanban_columns (id INT AUTO_INCREMENT PRIMARY KEY, `key` VARCHAR(100) UNIQUE NOT NULL, label VARCHAR(255) NOT NULL, color VARCHAR(20) DEFAULT '#6366f1', position INT DEFAULT 0, is_final BOOLEAN DEFAULT FALSE)",
   ];
   for (const sql of migrations) {
     try { await db.execute(sql); } catch {}

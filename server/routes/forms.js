@@ -28,7 +28,7 @@ router.post('/', requireAdmin, async (req, res) => {
   if (!name) return res.status(400).json({ error: 'Nome é obrigatório' });
 
   const [result] = await db.execute(
-    'INSERT INTO forms (name, description, schema) VALUES (?, ?, ?)',
+    'INSERT INTO forms (name, description, `schema`) VALUES (?, ?, ?)',
     [name, description || '', JSON.stringify(schema || { steps: [] })]
   );
   res.json({ success: true, id: result.insertId });
@@ -43,7 +43,7 @@ router.put('/:id', requireAdmin, async (req, res) => {
   const vals = [];
   if (name !== undefined) { sets.push('name = ?'); vals.push(name); }
   if (description !== undefined) { sets.push('description = ?'); vals.push(description); }
-  if (schema !== undefined) { sets.push('schema = ?'); vals.push(JSON.stringify(schema)); }
+  if (schema !== undefined) { sets.push('`schema` = ?'); vals.push(JSON.stringify(schema)); }
   sets.push('updated_at = NOW()');
   vals.push(req.params.id);
 
@@ -54,7 +54,6 @@ router.put('/:id', requireAdmin, async (req, res) => {
 // DELETE - Delete form
 router.delete('/:id', requireAdmin, async (req, res) => {
   const db = getDB();
-  // Unassign from clients first
   await db.execute('UPDATE clients SET form_id = NULL WHERE form_id = ?', [req.params.id]);
   await db.execute('DELETE FROM forms WHERE id = ?', [req.params.id]);
   res.json({ success: true });

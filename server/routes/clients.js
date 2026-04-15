@@ -29,7 +29,7 @@ router.get('/', async (req, res) => {
 
   if (action === 'list') {
     const [clients] = await db.query(
-      'SELECT c.*, t.name as template_name, t.niche FROM clients c JOIN templates t ON c.template_id = t.id ORDER BY c.created_at DESC'
+      'SELECT c.*, t.name as template_name, t.niche FROM clients c LEFT JOIN templates t ON c.template_id = t.id ORDER BY c.created_at DESC'
     );
     const stats = {
       total: 0, formulario_pendente: 0, formulario_preenchido: 0, em_edicao: 0,
@@ -86,7 +86,8 @@ router.post('/', async (req, res) => {
     const name = (req.body.name || '').trim();
     const email = (req.body.email || '').trim();
     const phone = (req.body.phone || '').trim();
-    const template_id = parseInt(req.body.template_id) || 1;
+    const template_id = req.body.template_id ? parseInt(req.body.template_id) : null;
+    const form_id = req.body.form_id ? parseInt(req.body.form_id) : null;
 
     if (!name) return res.status(400).json({ error: 'Nome é obrigatório' });
 
@@ -94,8 +95,8 @@ router.post('/', async (req, res) => {
     const review_token = generateToken();
 
     const [result] = await db.execute(
-      'INSERT INTO clients (token, review_token, template_id, name, email, phone) VALUES (?, ?, ?, ?, ?, ?)',
-      [token, review_token, template_id, name, email, phone]
+      'INSERT INTO clients (token, review_token, template_id, form_id, name, email, phone) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [token, review_token, template_id, form_id, name, email, phone]
     );
     const id = result.insertId;
 
@@ -125,21 +126,11 @@ router.post('/', async (req, res) => {
   if (action === 'update_status') {
     const id = parseInt(req.body.id) || 0;
     const status = req.body.status || '';
-    const valid = ['formulario_pendente', 'formulario_preenchido', 'em_edicao', 'aguardando_aprovacao', 'alteracao_solicitada', 'aprovado', 'publicado'];
-    if (!valid.includes(status)) return res.status(400).json({ error: 'Status inválido' });
-    const statusLabels = {
-      formulario_pendente: 'Formulário Pendente',
-      formulario_preenchido: 'Formulário Preenchido',
-      em_edicao: 'Em Edição',
-      aguardando_aprovacao: 'Aguardando Aprovação',
-      alteracao_solicitada: 'Alteração Solicitada',
-      aprovado: 'Aprovado',
-      publicado: 'Entregue',
-    };
+    if (!id || !status) return res.status(400).json({ error: 'Dados inválidos' });
     await db.execute('UPDATE clients SET status = ? WHERE id = ?', [status, id]);
     await db.execute(
       "INSERT INTO revisions (client_id, type, message) VALUES (?, 'submit', ?)",
-      [id, `Status alterado para ${statusLabels[status] || status}`]
+      [id, `Status alterado para ${status}`]
     );
     return res.json({ success: true });
   }

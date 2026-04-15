@@ -968,7 +968,10 @@ export default function FormWizard() {
   // Show summary for any status where form was already filled
   if (hasFilled && !isEditing && !submitted) {
     const statusInfo = STATUS_INFO[status] || STATUS_INFO.formulario_preenchido
-    const showSplitPreview = status !== 'formulario_preenchido'
+    // Show split preview (site left + form right) from 2nd column onwards
+    const kanbanCols = (() => { try { const s = localStorage.getItem('kanban_columns'); return s ? JSON.parse(s) : null } catch { return null } })()
+    const colIdx = kanbanCols ? kanbanCols.findIndex(c => c.key === status) : -1
+    const showSplitPreview = colIdx >= 1 || (!kanbanCols && status !== 'formulario_pendente')
     const previewUrl = `/api/preview.php?token=${token}`
 
     const renderValue = (val) => {

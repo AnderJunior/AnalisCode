@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import {
   Users, Plus, X, Copy, Check, ChevronRight,
   Loader2, AlertCircle, UserPlus, Search, Trash2,
-  List, LayoutGrid, GripVertical, Clock, Eye, EyeOff
+  List, LayoutGrid, GripVertical, Clock, Eye, EyeOff,
+  Settings, Pencil, Palette
 } from 'lucide-react'
 import { DndContext, DragOverlay, useDraggable, useDroppable, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
 import AdminLayout from '../../components/AdminLayout.jsx'
@@ -19,15 +20,27 @@ const STATUS_CONFIG = {
   publicado:             { label: 'Publicado',             dot: 'bg-gray-900' },
 }
 
-const KANBAN_COLUMNS = [
-  { key: 'formulario_pendente',   label: 'Form. Pendente',   color: 'bg-gray-400',    headerBg: 'bg-gray-50' },
-  { key: 'formulario_preenchido', label: 'Form. Preenchido', color: 'bg-blue-500',    headerBg: 'bg-blue-50' },
-  { key: 'em_edicao',             label: 'Em Edição',        color: 'bg-indigo-500',  headerBg: 'bg-indigo-50' },
-  { key: 'aguardando_aprovacao',  label: 'Aguard. Aprovação',color: 'bg-amber-500',   headerBg: 'bg-amber-50' },
-  { key: 'alteracao_solicitada',  label: 'Alter. Solicitada',color: 'bg-orange-500',  headerBg: 'bg-orange-50' },
-  { key: 'aprovado',              label: 'Aprovado',         color: 'bg-green-500',   headerBg: 'bg-green-50' },
-  { key: 'publicado',             label: 'Entregue',         color: 'bg-emerald-600', headerBg: 'bg-emerald-50' },
+const DEFAULT_KANBAN_COLUMNS = [
+  { key: 'formulario_pendente',   label: 'Form. Pendente',   color: '#9ca3af', headerBg: 'bg-gray-50' },
+  { key: 'formulario_preenchido', label: 'Form. Preenchido', color: '#3b82f6', headerBg: 'bg-blue-50' },
+  { key: 'em_edicao',             label: 'Em Edição',        color: '#6366f1', headerBg: 'bg-indigo-50' },
+  { key: 'aguardando_aprovacao',  label: 'Aguard. Aprovação',color: '#f59e0b', headerBg: 'bg-amber-50' },
+  { key: 'alteracao_solicitada',  label: 'Alter. Solicitada',color: '#f97316', headerBg: 'bg-orange-50' },
+  { key: 'aprovado',              label: 'Aprovado',         color: '#22c55e', headerBg: 'bg-green-50' },
+  { key: 'publicado',             label: 'Entregue',         color: '#10b981', headerBg: 'bg-emerald-50' },
 ]
+
+function loadKanbanColumns() {
+  try {
+    const saved = localStorage.getItem('kanban_columns')
+    if (saved) return JSON.parse(saved)
+  } catch {}
+  return DEFAULT_KANBAN_COLUMNS
+}
+
+function saveKanbanColumns(cols) {
+  localStorage.setItem('kanban_columns', JSON.stringify(cols))
+}
 
 function getDaysInStage(createdAt) {
   if (!createdAt) return 0
@@ -106,20 +119,30 @@ function KanbanCardOverlay({ client }) {
   )
 }
 
-function KanbanColumn({ column, clients, onCardClick }) {
+function KanbanColumn({ column, clients, onCardClick, onEditColumn, isFinal }) {
   const { setNodeRef, isOver } = useDroppable({ id: column.key })
   const count = clients.length
 
   return (
-    <div className="flex-shrink-0 w-[260px] flex flex-col bg-gray-50/80 rounded-xl border border-gray-100">
+    <div className="flex-shrink-0 w-[260px] flex flex-col bg-gray-50/80 rounded-xl border border-gray-100 group/col">
       {/* Column header */}
-      <div className={`px-4 py-3 rounded-t-xl ${column.headerBg} border-b border-gray-100`}>
+      <div className="px-4 py-3 rounded-t-xl border-b border-gray-100" style={{ backgroundColor: column.color + '15' }}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className={`w-2 h-2 rounded-full ${column.color}`} />
+            <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: column.color }} />
             <span className="text-xs font-bold text-gray-700">{column.label}</span>
+            {isFinal && <Check className="w-3 h-3 text-green-500" />}
           </div>
-          <span className="text-[10px] font-bold text-gray-400 bg-white/80 px-2 py-0.5 rounded-full">{count}</span>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => onEditColumn(column)}
+              className="p-1 rounded text-gray-300 hover:text-gray-600 hover:bg-white/60 opacity-0 group-hover/col:opacity-100 transition-all"
+              title="Editar coluna"
+            >
+              <Pencil className="w-3 h-3" />
+            </button>
+            <span className="text-[10px] font-bold text-gray-400 bg-white/80 px-2 py-0.5 rounded-full">{count}</span>
+          </div>
         </div>
       </div>
 
@@ -149,11 +172,142 @@ function KanbanColumn({ column, clients, onCardClick }) {
   )
 }
 
+function ColumnEditModal({ column, onSave, onDelete, onClose, isNew, onMoveLeft, onMoveRight, isFirst, isLast, onSetFinal, isFinal }) {
+  const [label, setLabel] = useState(column?.label || '')
+  const [color, setColor] = useState(column?.color || '#6366f1')
+  const COLORS = ['#9ca3af','#3b82f6','#6366f1','#f59e0b','#f97316','#22c55e','#10b981','#ef4444','#8b5cf6','#ec4899','#14b8a6','#0ea5e9']
+
+  const handleSave = () => {
+    if (!label.trim()) return
+    const finalKey = isNew ? label.trim().toLowerCase().replace(/[^a-z0-9]+/g, '_') : column.key
+    onSave({ ...column, label: label.trim(), color, key: finalKey })
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6">
+        <div className="flex items-center justify-between mb-5">
+          <h3 className="text-lg font-bold text-gray-900">{isNew ? 'Nova Coluna' : 'Editar Coluna'}</h3>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600"><X className="w-5 h-5" /></button>
+        </div>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Nome da coluna</label>
+            <input type="text" value={label} onChange={e => setLabel(e.target.value)} className="input-field" placeholder="Ex: Em Produção" autoFocus />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Cor</label>
+            <div className="flex items-center gap-2 flex-wrap">
+              <input type="color" value={color} onChange={e => setColor(e.target.value)} className="w-9 h-9 rounded-lg border-2 border-gray-200 cursor-pointer p-0.5 bg-white flex-shrink-0" />
+              {COLORS.map(c => (
+                <button key={c} onClick={() => setColor(c)} className={`w-7 h-7 rounded-full border-2 transition-all flex-shrink-0 ${color === c ? 'border-gray-900 scale-110' : 'border-transparent hover:border-gray-300'}`} style={{ backgroundColor: c }} />
+              ))}
+            </div>
+          </div>
+          {!isNew && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Posição</label>
+              <div className="flex items-center gap-2">
+                <button onClick={onMoveLeft} disabled={isFirst} className="btn-secondary text-xs px-3 py-1.5 disabled:opacity-30">
+                  <ChevronRight className="w-3.5 h-3.5 rotate-180" /> Esquerda
+                </button>
+                <button onClick={onMoveRight} disabled={isLast} className="btn-secondary text-xs px-3 py-1.5 disabled:opacity-30">
+                  Direita <ChevronRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+          )}
+          {!isNew && (
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" checked={isFinal} onChange={() => onSetFinal(column.key)} className="w-4 h-4 rounded border-gray-300 text-primary-600" />
+              <span className="text-sm text-gray-700">Coluna de cliente finalizado</span>
+            </label>
+          )}
+        </div>
+        <div className="flex gap-3 mt-6">
+          {!isNew && onDelete && (
+            <button onClick={onDelete} className="px-4 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 rounded-xl transition-colors">
+              Excluir
+            </button>
+          )}
+          <div className="flex-1" />
+          <button onClick={onClose} className="btn-secondary">Cancelar</button>
+          <button onClick={handleSave} disabled={!label.trim()} className="btn-primary disabled:opacity-50">Salvar</button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function KanbanBoard({ clients, setClients, onCardClick }) {
   const [activeClient, setActiveClient] = useState(null)
+  const [columns, setColumns] = useState([])
+  const [editingColumn, setEditingColumn] = useState(null)
+  const [isNewColumn, setIsNewColumn] = useState(false)
+
+  useEffect(() => {
+    api.getKanbanColumns().then(setColumns).catch(() => setColumns(loadKanbanColumns()))
+  }, [])
+
+  const finalColumn = columns.find(c => c.is_final)?.key || ''
+
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
   )
+
+  const handleEditColumn = (col) => {
+    setEditingColumn(col)
+    setIsNewColumn(false)
+  }
+
+  const handleAddColumn = () => {
+    setEditingColumn({ key: '', label: '', color: '#6366f1' })
+    setIsNewColumn(true)
+  }
+
+  const handleSaveColumn = async (updated) => {
+    try {
+      let newCols
+      if (isNewColumn) {
+        newCols = await api.createKanbanColumn({ label: updated.label, color: updated.color })
+      } else {
+        newCols = await api.updateKanbanColumn(updated.key, { label: updated.label, color: updated.color })
+      }
+      setColumns(newCols)
+    } catch (err) { alert(err.message) }
+    setEditingColumn(null)
+  }
+
+  const handleDeleteColumn = async () => {
+    if (!editingColumn) return
+    try {
+      const newCols = await api.deleteKanbanColumn(editingColumn.key)
+      setColumns(newCols)
+    } catch (err) { alert(err.message) }
+    setEditingColumn(null)
+  }
+
+  const handleMoveColumn = async (direction) => {
+    if (!editingColumn) return
+    const idx = columns.findIndex(c => c.key === editingColumn.key)
+    const newIdx = idx + direction
+    if (newIdx < 0 || newIdx >= columns.length) return
+    const newCols = [...columns]
+    ;[newCols[idx], newCols[newIdx]] = [newCols[newIdx], newCols[idx]]
+    setColumns(newCols)
+    try {
+      const reordered = newCols.map((c, i) => ({ key: c.key, position: i }))
+      await api.reorderKanbanColumns(reordered)
+    } catch (err) { alert(err.message) }
+  }
+
+  const handleSetFinal = async (key) => {
+    const isFinal = finalColumn !== key
+    try {
+      const newCols = await api.updateKanbanColumn(key, { is_final: isFinal })
+      setColumns(newCols)
+    } catch (err) { alert(err.message) }
+  }
 
   const handleDragStart = (event) => {
     const client = event.active.data.current?.client
@@ -169,14 +323,12 @@ function KanbanBoard({ clients, setClients, onCardClick }) {
     const newStatus = over.id
     if (!client || client.status === newStatus) return
 
-    // Optimistic update
     const oldClients = [...clients]
     setClients(prev => prev.map(c => c.id === client.id ? { ...c, status: newStatus, updated_at: new Date().toISOString() } : c))
 
     try {
       await api.updateStatus(client.id, newStatus)
     } catch (err) {
-      // Revert on error
       setClients(oldClients)
       alert('Erro ao atualizar status: ' + (err.message || 'Tente novamente'))
     }
@@ -184,31 +336,58 @@ function KanbanBoard({ clients, setClients, onCardClick }) {
 
   const handleDragCancel = () => setActiveClient(null)
 
-  // Group clients by status
   const grouped = {}
-  KANBAN_COLUMNS.forEach(col => { grouped[col.key] = [] })
+  columns.forEach(col => { grouped[col.key] = [] })
   clients.forEach(client => {
     const key = client.status || 'formulario_pendente'
     if (grouped[key]) grouped[key].push(client)
-    else grouped['formulario_pendente'].push(client)
+    else if (grouped['formulario_pendente']) grouped['formulario_pendente'].push(client)
   })
 
   return (
-    <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd} onDragCancel={handleDragCancel}>
-      <div className="flex gap-3 overflow-x-auto pb-4 px-1" style={{ minHeight: 'calc(100vh - 220px)' }}>
-        {KANBAN_COLUMNS.map((col) => (
-          <KanbanColumn
-            key={col.key}
-            column={col}
-            clients={grouped[col.key]}
-            onCardClick={onCardClick}
-          />
-        ))}
-      </div>
-      <DragOverlay>
-        {activeClient ? <KanbanCardOverlay client={activeClient} /> : null}
-      </DragOverlay>
-    </DndContext>
+    <>
+      <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd} onDragCancel={handleDragCancel}>
+        <div className="flex gap-3 overflow-x-auto pb-4 px-1" style={{ minHeight: 'calc(100vh - 220px)' }}>
+          {columns.map((col) => (
+            <KanbanColumn
+              key={col.key}
+              column={col}
+              clients={grouped[col.key] || []}
+              onCardClick={onCardClick}
+              onEditColumn={handleEditColumn}
+              isFinal={finalColumn === col.key}
+            />
+          ))}
+          {/* Add column button */}
+          <button
+            onClick={handleAddColumn}
+            className="flex-shrink-0 w-[260px] flex flex-col items-center justify-center bg-gray-50/50 rounded-xl border-2 border-dashed border-gray-200 hover:border-primary-300 hover:bg-primary-50/20 transition-all min-h-[120px] cursor-pointer group/add"
+          >
+            <Plus className="w-5 h-5 text-gray-300 group-hover/add:text-primary-500 transition-colors" />
+            <span className="text-xs text-gray-400 group-hover/add:text-primary-600 mt-1 font-medium">Nova coluna</span>
+          </button>
+        </div>
+        <DragOverlay>
+          {activeClient ? <KanbanCardOverlay client={activeClient} /> : null}
+        </DragOverlay>
+      </DndContext>
+
+      {editingColumn && (
+        <ColumnEditModal
+          column={editingColumn}
+          isNew={isNewColumn}
+          onSave={handleSaveColumn}
+          onDelete={isNewColumn ? null : handleDeleteColumn}
+          onClose={() => setEditingColumn(null)}
+          onMoveLeft={() => handleMoveColumn(-1)}
+          onMoveRight={() => handleMoveColumn(1)}
+          isFirst={columns.findIndex(c => c.key === editingColumn.key) === 0}
+          isLast={columns.findIndex(c => c.key === editingColumn.key) === columns.length - 1}
+          onSetFinal={handleSetFinal}
+          isFinal={finalColumn === editingColumn.key}
+        />
+      )}
+    </>
   )
 }
 
@@ -241,15 +420,18 @@ function CopyButton({ text }) {
   )
 }
 
-function CreateClientModal({ onClose, onSuccess }) {
+export function CreateClientModal({ onClose, onSuccess }) {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
   const [templateId, setTemplateId] = useState('')
   const [templates, setTemplates] = useState([])
+  const [forms, setForms] = useState([])
+  const [formId, setFormId] = useState('')
   const [loading, setLoading] = useState(false)
   const [templatesLoading, setTemplatesLoading] = useState(true)
   const [error, setError] = useState('')
+  const [custom, setCustom] = useState(false)
 
   useEffect(() => {
     api.getTemplates()
@@ -259,16 +441,20 @@ function CreateClientModal({ onClose, onSuccess }) {
       })
       .catch(() => setError('Erro ao carregar templates'))
       .finally(() => setTemplatesLoading(false))
+    api.getForms().then(setForms).catch(() => {})
   }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!name.trim()) { setError('Nome é obrigatório'); return }
-    if (!templateId) { setError('Selecione um template'); return }
+    if (!custom && !templateId) { setError('Selecione um template'); return }
     setError('')
     setLoading(true)
     try {
-      const data = await api.createClient({ name, email, phone, template_id: parseInt(templateId) })
+      const payload = { name, email, phone }
+      if (!custom) payload.template_id = parseInt(templateId)
+      if (formId) payload.form_id = parseInt(formId)
+      const data = await api.createClient(payload)
       onSuccess(data.client)
     } catch (err) {
       setError(err.message || 'Erro ao criar cliente')
@@ -309,6 +495,40 @@ function CreateClientModal({ onClose, onSuccess }) {
               placeholder="(11) 99999-9999" className="input-field text-sm" disabled={loading} />
           </div>
           <div>
+            <label className="block text-xs font-medium text-gray-500 mb-1.5">Formulário</label>
+            <select
+              value={formId}
+              onChange={e => setFormId(e.target.value)}
+              className="input-field text-sm"
+              disabled={loading}
+            >
+              <option value="">Formulário padrão do template</option>
+              {forms.map(f => (
+                <option key={f.id} value={f.id}>{f.name}</option>
+              ))}
+            </select>
+          </div>
+          <div
+            onClick={() => { setCustom(!custom); if (!custom) setTemplateId('') }}
+            className={`flex items-center justify-between rounded-xl px-4 py-3.5 cursor-pointer border-2 transition-all ${
+              custom
+                ? 'bg-primary-50 border-primary-300'
+                : 'bg-gray-50 border-gray-100 hover:border-gray-200'
+            }`}
+          >
+            <div>
+              <p className={`text-sm font-semibold ${custom ? 'text-primary-700' : 'text-gray-700'}`}>Site 100% personalizado</p>
+              <p className="text-[10px] text-gray-400 mt-0.5">Sem template base — site criado do zero</p>
+            </div>
+            <div className={`relative w-11 h-6 rounded-full transition-colors flex-shrink-0 ${custom ? 'bg-primary-600' : 'bg-gray-300'}`}>
+              <div
+                className="absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow-md transition-transform"
+                style={{ transform: custom ? 'translateX(20px)' : 'translateX(0)' }}
+              />
+            </div>
+          </div>
+
+          {!custom && <div>
             <label className="block text-xs font-medium text-gray-500 mb-2">Template *</label>
             {templatesLoading ? (
               <div className="grid grid-cols-2 gap-3">
@@ -342,7 +562,7 @@ function CreateClientModal({ onClose, onSuccess }) {
                 ))}
               </div>
             )}
-          </div>
+          </div>}
 
           {error && (
             <div className="flex items-center gap-2 bg-red-50 border border-red-100 rounded-lg px-3 py-2.5">

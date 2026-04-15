@@ -460,25 +460,8 @@ export default function FormBuilder() {
   }
 
   return (
-    <AdminLayout
-      title={name || 'Form Builder'}
-      actions={
-        <div className="flex items-center gap-2">
-          <button
-            onClick={save}
-            disabled={saving}
-            className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-xl transition-all ${
-              saved
-                ? 'bg-green-50 text-green-600 border border-green-200'
-                : 'bg-primary-600 text-white hover:bg-primary-700'
-            }`}
-          >
-            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : saved ? '✓ Salvo' : <><Save className="w-4 h-4" /> Salvar</>}
-          </button>
-        </div>
-      }
-    >
-      {/* Back + Name */}
+    <AdminLayout title={name || 'Form Builder'}>
+      {/* Back + Name + Save */}
       <div className="flex items-center gap-4 mb-6">
         <button onClick={() => navigate('/admin/formularios')} className="p-2 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600">
           <ArrowLeft className="w-5 h-5" />
@@ -499,6 +482,17 @@ export default function FormBuilder() {
             placeholder="Descrição do formulário"
           />
         </div>
+        <button
+          onClick={save}
+          disabled={saving}
+          className={`flex items-center gap-2 px-5 py-2.5 text-sm font-medium rounded-xl transition-all flex-shrink-0 ${
+            saved
+              ? 'bg-green-50 text-green-600 border border-green-200'
+              : 'bg-primary-600 text-white hover:bg-primary-700'
+          }`}
+        >
+          {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : saved ? '✓ Salvo' : <><Save className="w-4 h-4" /> Salvar</>}
+        </button>
       </div>
 
       {/* Tab switcher */}

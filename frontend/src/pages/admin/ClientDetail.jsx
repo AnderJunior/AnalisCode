@@ -47,18 +47,39 @@ const STATUS_CONFIG = {
 
 const ALL_STATUSES = Object.entries(STATUS_CONFIG).map(([value, { label }]) => ({ value, label }))
 
-const PIPELINE_STEPS = [
-  { key: 'formulario_pendente',   label: 'Formulário Pendente' },
-  { key: 'formulario_preenchido', label: 'Formulário Preenchido' },
-  { key: 'em_edicao',             label: 'Em Edição' },
-  { key: 'aguardando_aprovacao',  label: 'Aguardando Aprovação' },
-  { key: 'alteracao_solicitada',  label: 'Alteração Solicitada' },
-  { key: 'aprovado',              label: 'Aprovado' },
-  { key: 'publicado',             label: 'Entregue' },
+const DEFAULT_PIPELINE = [
+  { key: 'formulario_pendente',   label: 'Formulário Pendente', color: '#9ca3af' },
+  { key: 'formulario_preenchido', label: 'Formulário Preenchido', color: '#3b82f6' },
+  { key: 'em_edicao',             label: 'Em Edição', color: '#6366f1' },
+  { key: 'aguardando_aprovacao',  label: 'Aguardando Aprovação', color: '#f59e0b' },
+  { key: 'alteracao_solicitada',  label: 'Alteração Solicitada', color: '#f97316' },
+  { key: 'aprovado',              label: 'Aprovado', color: '#22c55e' },
+  { key: 'publicado',             label: 'Entregue', color: '#10b981' },
 ]
 
+let _cachedPipelineSteps = null
+
+function loadPipelineSteps() {
+  if (_cachedPipelineSteps) return _cachedPipelineSteps
+  return DEFAULT_PIPELINE
+}
+
+function usePipelineSteps() {
+  const [steps, setSteps] = useState(loadPipelineSteps)
+  useEffect(() => {
+    api.getKanbanColumns().then(cols => {
+      if (cols && cols.length) {
+        _cachedPipelineSteps = cols
+        setSteps(cols)
+      }
+    }).catch(() => {})
+  }, [])
+  return steps
+}
+
 function StatusPipeline({ currentStatus, onStatusChange, updating }) {
-  const [confirmModal, setConfirmModal] = useState(null) // null or { key, label }
+  const PIPELINE_STEPS = usePipelineSteps()
+  const [confirmModal, setConfirmModal] = useState(null)
   const currentIdx = PIPELINE_STEPS.findIndex(s => s.key === currentStatus)
 
   return (
@@ -78,15 +99,19 @@ function StatusPipeline({ currentStatus, onStatusChange, updating }) {
               disabled={updating}
               className={`flex-1 relative px-3 py-3.5 text-center transition-all text-xs font-semibold border-b-2 ${
                 isCurrent
-                  ? 'bg-primary-50 text-primary-700 border-primary-500'
+                  ? 'text-gray-900'
                   : isPast
-                    ? 'bg-green-50/50 text-green-700 border-green-400 hover:bg-green-50'
+                    ? 'text-gray-600 hover:bg-gray-50'
                     : 'bg-white text-gray-400 border-transparent hover:bg-gray-50 hover:text-gray-600'
               } ${updating ? 'opacity-50 cursor-not-allowed' : isCurrent ? 'cursor-default' : 'cursor-pointer'}`}
+              style={{
+                borderBottomColor: isCurrent ? (step.color || '#6366f1') : isPast ? (step.color || '#22c55e') + '60' : 'transparent',
+                backgroundColor: isCurrent ? (step.color || '#6366f1') + '15' : isPast ? (step.color || '#22c55e') + '08' : undefined,
+              }}
             >
               <span className="block truncate">{step.label}</span>
               {isCurrent && (
-                <span className="absolute -bottom-px left-1/2 -translate-x-1/2 w-2 h-2 bg-primary-500 rounded-full -mb-1" />
+                <span className="absolute -bottom-px left-1/2 -translate-x-1/2 w-2 h-2 rounded-full -mb-1" style={{ backgroundColor: step.color || '#6366f1' }} />
               )}
             </button>
           )
@@ -153,6 +178,50 @@ function StatusBadge({ status }) {
       <span className={`w-2 h-2 rounded-full flex-shrink-0 ${config.dot}`} />
       {config.label}
     </span>
+  )
+}
+
+function ClientStatusTags({ status, formOpenedAt }) {
+  const steps = usePipelineSteps()
+  const idx = steps.findIndex(s => s.key === status)
+  const finalCol = steps.find(s => s.is_final)
+  const finalIdx = finalCol ? steps.findIndex(s => s.key === finalCol.key) : steps.length - 1
+  const isFormFilled = idx >= 1
+  const isInProgress = idx >= 1 && (finalIdx === -1 || idx < finalIdx)
+  const isFinished = idx >= 0 && idx === finalIdx
+
+  return (
+    <div className="flex flex-col items-end gap-1">
+      {isFormFilled && (
+        <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-1 rounded-full bg-blue-50 text-blue-600">
+          <Check className="w-3 h-3" />
+          Formulário Preenchido
+        </span>
+      )}
+      {isInProgress && (
+        <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-1 rounded-full bg-amber-50 text-amber-600">
+          <Clock className="w-3 h-3" />
+          Em Andamento
+        </span>
+      )}
+      {isFinished && (
+        <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-1 rounded-full bg-green-50 text-green-600">
+          <CheckCircle2 className="w-3 h-3" />
+          Finalizado
+        </span>
+      )}
+      {idx === 0 && (
+        <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-1 rounded-full bg-gray-100 text-gray-500">
+          Aguardando formulário
+        </span>
+      )}
+      {idx === 0 && formOpenedAt && (
+        <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-1 rounded-full bg-purple-50 text-purple-600">
+          <Eye className="w-3 h-3" />
+          Formulário Aberto
+        </span>
+      )}
+    </div>
   )
 }
 
@@ -538,6 +607,11 @@ function FormSelector({ client, onUpdate }) {
   const [forms, setForms] = useState([])
   const [loading, setLoading] = useState(true)
   const [updating, setUpdating] = useState(false)
+  const [editing, setEditing] = useState(false)
+
+  const hasFormData = client?.form_data && Object.keys(client.form_data).length > 0
+  const hasForm = !!client?.form_id
+  const formName = forms.find(f => f.id === client?.form_id)?.name
 
   useEffect(() => {
     api.getForms().then(setForms).catch(() => {}).finally(() => setLoading(false))
@@ -548,6 +622,7 @@ function FormSelector({ client, onUpdate }) {
     try {
       await api.assignFormToClient(client.id, formId || null)
       onUpdate(formId || null)
+      setEditing(false)
     } catch (err) {
       alert(err.message)
     } finally {
@@ -563,25 +638,47 @@ function FormSelector({ client, onUpdate }) {
       </h3>
       {loading ? (
         <div className="flex items-center justify-center py-4"><Loader2 className="w-4 h-4 animate-spin text-gray-400" /></div>
-      ) : (
+      ) : !hasForm || editing ? (
         <div>
           <select
             value={client?.form_id || ''}
             onChange={e => handleChange(e.target.value ? parseInt(e.target.value) : null)}
             disabled={updating}
             className="input-field text-sm"
+            autoFocus={editing}
           >
             <option value="">Schema do template (padrão)</option>
             {forms.map(f => (
               <option key={f.id} value={f.id}>{f.name}</option>
             ))}
           </select>
-          {client?.form_id && (
-            <a href={`/admin/formularios/${client.form_id}`} className="text-xs text-primary-600 hover:underline mt-2 inline-block">
-              Editar formulário
-            </a>
+          {editing && (
+            <button onClick={() => setEditing(false)} className="text-xs text-gray-400 hover:underline mt-2">
+              Cancelar
+            </button>
           )}
-          {client?.form_name && !client?.form_id && null}
+        </div>
+      ) : (
+        <div>
+          <div className="flex items-center justify-between bg-gray-50 rounded-xl px-4 py-3">
+            <div className="flex items-center gap-2">
+              <FileText className="w-4 h-4 text-primary-600" />
+              <span className="text-sm font-medium text-gray-900">{formName || 'Formulário #' + client.form_id}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              {!hasFormData && (
+                <button onClick={() => setEditing(true)} className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-200 transition-all" title="Alterar formulário">
+                  <Edit3 className="w-3.5 h-3.5" />
+                </button>
+              )}
+              <a href={`/admin/formularios/${client.form_id}`} className="p-1.5 rounded-lg text-gray-400 hover:text-primary-600 hover:bg-primary-50 transition-all" title="Editar campos do formulário">
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            </div>
+          </div>
+          {hasFormData && (
+            <p className="text-[10px] text-gray-400 mt-2 px-1">Cliente já respondeu. Não é possível trocar o formulário.</p>
+          )}
         </div>
       )}
     </div>
@@ -979,7 +1076,7 @@ export default function ClientDetail() {
             <div className="card">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-semibold text-gray-900">Informações do Cliente</h3>
-                <StatusBadge status={client?.status} />
+                <ClientStatusTags status={client?.status} formOpenedAt={client?.form_opened_at} />
               </div>
               <div>
                 <InfoRow icon={User} label="Nome" value={client?.name} />

@@ -229,6 +229,39 @@ export async function deleteForm(id) {
   return request(`/api/forms/${id}`, { method: 'DELETE' })
 }
 
+// Kanban Columns
+export async function getKanbanColumns() {
+  return request('/api/kanban-columns')
+}
+
+export async function createKanbanColumn(data) {
+  if (!csrfToken) await getCSRF()
+  return request('/api/kanban-columns', {
+    method: 'POST',
+    body: JSON.stringify({ ...data, csrf_token: csrfToken }),
+  })
+}
+
+export async function updateKanbanColumn(key, data) {
+  if (!csrfToken) await getCSRF()
+  return request(`/api/kanban-columns/${key}`, {
+    method: 'PUT',
+    body: JSON.stringify({ ...data, csrf_token: csrfToken }),
+  })
+}
+
+export async function reorderKanbanColumns(columns) {
+  if (!csrfToken) await getCSRF()
+  return request('/api/kanban-columns', {
+    method: 'PUT',
+    body: JSON.stringify({ columns, csrf_token: csrfToken }),
+  })
+}
+
+export async function deleteKanbanColumn(key) {
+  return request(`/api/kanban-columns/${key}`, { method: 'DELETE' })
+}
+
 export async function assignFormToClient(clientId, formId) {
   if (!csrfToken) await getCSRF()
   return request('/api/clients.php', {
