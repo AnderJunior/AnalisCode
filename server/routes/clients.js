@@ -127,9 +127,9 @@ router.post('/', async (req, res) => {
     const id = parseInt(req.body.id) || 0;
     const status = req.body.status || '';
     if (!id || !status) return res.status(400).json({ error: 'Dados inválidos' });
-    await db.execute('UPDATE clients SET status = ? WHERE id = ?', [status, id]);
+    await db.execute('UPDATE clients SET status = ?, updated_at = NOW() WHERE id = ?', [status, id]);
     await db.execute(
-      "INSERT INTO revisions (client_id, type, message) VALUES (?, 'submit', ?)",
+      "INSERT INTO revisions (client_id, type, message) VALUES (?, 'revision_request', ?)",
       [id, `Status alterado para ${status}`]
     );
     return res.json({ success: true });

@@ -704,15 +704,18 @@ function RevisionTimeline({ revisions, formOpenedAt }) {
   }
 
   const getRevisionLabel = (rev) => {
-    switch (rev.action || rev.type) {
+    const t = rev.action || rev.type
+    const msg = rev.message || ''
+    switch (t) {
       case 'approve': return 'Site Aprovado'
       case 'request_revision': return 'Alteração Solicitada'
-      case 'submit': return 'Formulário preenchido'
+      case 'revision_request': return msg.includes('Status alterado') ? 'Etapa alterada' : 'Alteração Solicitada'
+      case 'submit': return msg.includes('atualizado') ? 'Formulário atualizado' : 'Formulário preenchido'
       case 'edit': return 'Formulário atualizado'
       case 'publish': return 'Site publicado'
-      case 'status_change': return 'Status alterado'
+      case 'status_change': return 'Etapa alterada'
       case 'link_opened': return 'Link do formulário aberto'
-      default: return rev.action || rev.type || 'Evento'
+      default: return t || 'Evento'
     }
   }
 

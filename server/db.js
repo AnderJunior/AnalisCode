@@ -14,6 +14,7 @@ function getDB() {
       charset: 'utf8mb4',
       waitForConnections: true,
       connectionLimit: 10,
+      timezone: '-03:00',
     });
   }
   return pool;
