@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom'
-import { LayoutDashboard, LogOut, ChevronRight, Users, Layout, ClipboardList, FileText } from 'lucide-react'
+import { LayoutDashboard, LogOut, ChevronRight, Users, Layout, FileText } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext.jsx'
 import logoLetreiro from '../assets/logo-letreiro.png'
 
@@ -8,12 +8,6 @@ const NAV_SECTIONS = [
     label: 'Visão Geral',
     items: [
       { label: 'Dashboard', icon: LayoutDashboard, path: '/admin' },
-    ],
-  },
-  {
-    label: 'Tarefas',
-    items: [
-      { label: 'Workspace', icon: ClipboardList, path: '/admin/workspace' },
     ],
   },
   {

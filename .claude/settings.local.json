@@ -15,7 +15,12 @@
       "Bash(taskkill //F //FI \"WINDOWTITLE eq node*\")",
       "Bash(npx kill-port:*)",
       "Bash(fuser -k 3000/tcp)",
-      "Bash(node server.js)"
+      "Bash(node server.js)",
+      "Bash(ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 root@149.102.143.1 \"echo connected && hostname\")",
+      "Bash(ssh -o StrictHostKeyChecking=no root@149.102.143.1 \"cd /opt/sites-eaivendeu/analiscode && git pull origin main\")",
+      "Bash(ssh -o StrictHostKeyChecking=no root@149.102.143.1 \"cd /opt/sites-eaivendeu/analiscode && docker build -t analiscode/sites:latest . 2>&1 | tail -5\")",
+      "Bash(ssh -o StrictHostKeyChecking=no root@149.102.143.1 \"docker service update --force analiscode_analiscode\")",
+      "Bash(npx vite:*)"
     ]
   }
 }
