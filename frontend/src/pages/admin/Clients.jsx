@@ -172,15 +172,27 @@ function KanbanColumn({ column, clients, onCardClick, onEditColumn, isFinal }) {
   )
 }
 
-function ColumnEditModal({ column, onSave, onDelete, onClose, isNew, onMoveLeft, onMoveRight, isFirst, isLast, onSetFinal, isFinal }) {
+const ROLE_OPTIONS = [
+  { value: '', label: 'Nenhum', desc: 'Coluna comum, sem função especial' },
+  { value: 'form_pending', label: 'Formulário Pendente', desc: 'Clientes novos entram aqui' },
+  { value: 'post_form', label: 'Pós-formulário', desc: 'Cliente é movido para cá após preencher o formulário' },
+  { value: 'approval', label: 'Aprovação', desc: 'Cliente vê botões de aprovar/solicitar alteração' },
+  { value: 'finished', label: 'Finalizado', desc: 'Cliente concluído (métricas futuras)' },
+]
+
+function ColumnEditModal({ column, onSave, onDelete, onClose, isNew, onMoveLeft, onMoveRight, isFirst, isLast, allColumns }) {
   const [label, setLabel] = useState(column?.label || '')
   const [color, setColor] = useState(column?.color || '#6366f1')
+  const [role, setRole] = useState(column?.role || '')
   const COLORS = ['#9ca3af','#3b82f6','#6366f1','#f59e0b','#f97316','#22c55e','#10b981','#ef4444','#8b5cf6','#ec4899','#14b8a6','#0ea5e9']
+
+  // Roles already taken by other columns
+  const takenRoles = (allColumns || []).filter(c => c.key !== column?.key && c.role).map(c => c.role)
 
   const handleSave = () => {
     if (!label.trim()) return
     const finalKey = isNew ? label.trim().toLowerCase().replace(/[^a-z0-9]+/g, '_') : column.key
-    onSave({ ...column, label: label.trim(), color, key: finalKey })
+    onSave({ ...column, label: label.trim(), color, key: finalKey, role: role || null })
   }
 
   return (
@@ -204,6 +216,16 @@ function ColumnEditModal({ column, onSave, onDelete, onClose, isNew, onMoveLeft,
               ))}
             </div>
           </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Função da coluna</label>
+            <select value={role} onChange={e => setRole(e.target.value)} className="input-field text-sm">
+              {ROLE_OPTIONS.map(r => (
+                <option key={r.value} value={r.value} disabled={r.value && takenRoles.includes(r.value)}>
+                  {r.label}{r.value && takenRoles.includes(r.value) ? ' (em uso)' : ''}
+                </option>
+              ))}
+            </select>
+          </div>
           {!isNew && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Posição</label>
@@ -216,12 +238,6 @@ function ColumnEditModal({ column, onSave, onDelete, onClose, isNew, onMoveLeft,
                 </button>
               </div>
             </div>
-          )}
-          {!isNew && (
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" checked={isFinal} onChange={() => onSetFinal(column.key)} className="w-4 h-4 rounded border-gray-300 text-primary-600" />
-              <span className="text-sm text-gray-700">Coluna de cliente finalizado</span>
-            </label>
           )}
         </div>
         <div className="flex gap-3 mt-6">
@@ -269,9 +285,9 @@ function KanbanBoard({ clients, setClients, onCardClick }) {
     try {
       let newCols
       if (isNewColumn) {
-        newCols = await api.createKanbanColumn({ label: updated.label, color: updated.color })
+        newCols = await api.createKanbanColumn({ label: updated.label, color: updated.color, role: updated.role })
       } else {
-        newCols = await api.updateKanbanColumn(updated.key, { label: updated.label, color: updated.color })
+        newCols = await api.updateKanbanColumn(updated.key, { label: updated.label, color: updated.color, role: updated.role })
       }
       setColumns(newCols)
     } catch (err) { alert(err.message) }
@@ -301,13 +317,6 @@ function KanbanBoard({ clients, setClients, onCardClick }) {
     } catch (err) { alert(err.message) }
   }
 
-  const handleSetFinal = async (key) => {
-    const isFinal = finalColumn !== key
-    try {
-      const newCols = await api.updateKanbanColumn(key, { is_final: isFinal })
-      setColumns(newCols)
-    } catch (err) { alert(err.message) }
-  }
 
   const handleDragStart = (event) => {
     const client = event.active.data.current?.client
@@ -383,20 +392,21 @@ function KanbanBoard({ clients, setClients, onCardClick }) {
           onMoveRight={() => handleMoveColumn(1)}
           isFirst={columns.findIndex(c => c.key === editingColumn.key) === 0}
           isLast={columns.findIndex(c => c.key === editingColumn.key) === columns.length - 1}
-          onSetFinal={handleSetFinal}
-          isFinal={finalColumn === editingColumn.key}
+          allColumns={columns}
         />
       )}
     </>
   )
 }
 
-function StatusBadge({ status }) {
-  const config = STATUS_CONFIG[status] || { label: status, dot: 'bg-gray-400' }
+function StatusBadge({ status, columns }) {
+  const col = columns?.find(c => c.key === status)
+  const label = col?.label || STATUS_CONFIG[status]?.label || status
+  const color = col?.color || '#9ca3af'
   return (
-    <span className="inline-flex items-center gap-1.5 text-xs text-gray-500">
-      <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${config.dot}`} />
-      {config.label}
+    <span className="inline-flex items-center gap-1.5 text-xs text-gray-600">
+      <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: color }} />
+      {label}
     </span>
   )
 }
@@ -595,13 +605,15 @@ export default function Clients() {
   const [deleteConfirm, setDeleteConfirm] = useState(null)
   const [deleting, setDeleting] = useState(false)
   const [viewMode, setViewMode] = useState('kanban')
+  const [kanbanColumns, setKanbanColumns] = useState([])
 
   const fetchData = useCallback(async () => {
     setLoading(true)
     setError('')
     try {
-      const data = await api.getClients()
+      const [data, cols] = await Promise.all([api.getClients(), api.getKanbanColumns().catch(() => [])])
       setClients(data.clients || [])
+      setKanbanColumns(cols || [])
     } catch (err) {
       setError(err.message || 'Erro ao carregar clientes')
     } finally {
@@ -733,7 +745,7 @@ export default function Clients() {
                     {client.email && <p className="text-xs text-gray-400 mt-0.5">{client.email}</p>}
                   </td>
                   <td className="px-6 py-3.5">
-                    <StatusBadge status={client.status} />
+                    <StatusBadge status={client.status} columns={kanbanColumns} />
                   </td>
                   <td className="px-6 py-3.5">
                     <p className="text-sm text-gray-500">{client.template_name || '—'}</p>

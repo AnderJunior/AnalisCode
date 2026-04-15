@@ -128,9 +128,12 @@ router.post('/', async (req, res) => {
     const status = req.body.status || '';
     if (!id || !status) return res.status(400).json({ error: 'Dados inválidos' });
     await db.execute('UPDATE clients SET status = ?, updated_at = NOW() WHERE id = ?', [status, id]);
+    // Get column label for the log message
+    const [colRows] = await db.execute('SELECT label FROM kanban_columns WHERE `key` = ?', [status]);
+    const colLabel = colRows.length ? colRows[0].label : status;
     await db.execute(
       "INSERT INTO revisions (client_id, type, message) VALUES (?, 'revision_request', ?)",
-      [id, `Status alterado para ${status}`]
+      [id, `Etapa mudada para ${colLabel}`]
     );
     return res.json({ success: true });
   }

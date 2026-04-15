@@ -18,12 +18,14 @@ const STATUS_CONFIG = {
   publicado:             { label: 'Publicado',           dot: 'bg-gray-900' },
 }
 
-function StatusBadge({ status }) {
-  const config = STATUS_CONFIG[status] || { label: status, dot: 'bg-gray-400' }
+function StatusBadge({ status, columns }) {
+  const col = columns?.find(c => c.key === status)
+  const label = col?.label || STATUS_CONFIG[status]?.label || status
+  const color = col?.color || '#9ca3af'
   return (
     <span className="inline-flex items-center gap-1.5 text-xs text-gray-600">
-      <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${config.dot}`} />
-      {config.label}
+      <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: color }} />
+      {label}
     </span>
   )
 }
@@ -71,13 +73,15 @@ export default function Dashboard() {
   const [error, setError] = useState('')
   const [showModal, setShowModal] = useState(false)
   const [search, setSearch] = useState('')
+  const [kanbanColumns, setKanbanColumns] = useState([])
 
   const fetchData = useCallback(async () => {
     try {
       setLoading(true)
-      const data = await api.getClients()
+      const [data, cols] = await Promise.all([api.getClients(), api.getKanbanColumns().catch(() => [])])
       setClients(data.clients || [])
       setStats(data.stats || {})
+      setKanbanColumns(cols || [])
     } catch (err) {
       setError(err.message || 'Erro ao carregar clientes')
     } finally {
@@ -195,7 +199,7 @@ export default function Dashboard() {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <StatusBadge status={client.status} />
+                      <StatusBadge status={client.status} columns={kanbanColumns} />
                     </td>
                     <td className="px-6 py-4">
                       <div>

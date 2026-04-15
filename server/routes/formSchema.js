@@ -55,8 +55,20 @@ router.get('/', async (req, res) => {
     uploadsMap[u.field_key] = `uploads/${token}/${u.filename}`;
   }
 
+  // Get column roles for client status
+  let statusRole = null
+  let columnRoles = {}
+  try {
+    const [colRows] = await db.query('SELECT `key`, role FROM kanban_columns WHERE role IS NOT NULL')
+    for (const c of colRows) {
+      columnRoles[c.role] = c.key
+      if (c.key === client.status) statusRole = c.role
+    }
+  } catch (e) {}
+
   res.json({
-    client: { name: client.name, status: client.status, template_name: client.template_name, form_opened_at: client.form_opened_at },
+    client: { name: client.name, status: client.status, template_name: client.template_name, form_opened_at: client.form_opened_at, status_role: statusRole },
+    column_roles: columnRoles,
     schema,
     form_data: client.form_data ? (typeof client.form_data === 'string' ? JSON.parse(client.form_data) : client.form_data) : null,
     uploads: uploadsMap,

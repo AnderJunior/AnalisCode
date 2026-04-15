@@ -719,6 +719,7 @@ export default function FormWizard() {
   const [error, setError] = useState('')
   const [schema, setSchema] = useState(null)
   const [client, setClient] = useState(null)
+  const [columnRoles, setColumnRoles] = useState({})
   const [formData, setFormData] = useState({})
   const [currentStep, setCurrentStep] = useState(0)
   const [submitting, setSubmitting] = useState(false)
@@ -774,6 +775,7 @@ export default function FormWizard() {
         const data = await api.getFormSchema(token)
         setSchema(data.schema)
         setClient(data.client)
+        if (data.column_roles) setColumnRoles(data.column_roles)
 
         // Initialize form data — flatten nested keys (brand.name, hero.image, etc.)
         const flatFormData = data.form_data ? flattenObject(data.form_data) : {}
@@ -923,19 +925,22 @@ export default function FormWizard() {
   }
 
   const status = client?.status || 'formulario_pendente'
-  const canEdit = status === 'formulario_preenchido'
-  const hasFilled = status !== 'formulario_pendente'
-  const needsReview = status === 'aguardando_aprovacao'
+  const statusRole = client?.status_role || ''
+  const formPendingKey = columnRoles.form_pending || 'formulario_pendente'
+  const postFormKey = columnRoles.post_form || 'formulario_preenchido'
+  const canEdit = status === postFormKey
+  const hasFilled = status !== formPendingKey
+  const needsReview = statusRole === 'approval'
 
-  // Status info for the summary banner
-  const STATUS_INFO = {
-    formulario_preenchido: { label: 'Formulário enviado', color: 'bg-green-50 border-green-200 text-green-700' },
-    em_edicao:            { label: 'Seu site está sendo criado', color: 'bg-blue-50 border-blue-200 text-blue-700' },
-    aguardando_aprovacao: { label: 'Aguardando sua aprovação', color: 'bg-amber-50 border-amber-200 text-amber-700' },
-    alteracao_solicitada: { label: 'Alterações sendo realizadas', color: 'bg-orange-50 border-orange-200 text-orange-700' },
-    aprovado:             { label: 'Site aprovado!', color: 'bg-green-50 border-green-200 text-green-700' },
-    publicado:            { label: 'Site publicado!', color: 'bg-green-50 border-green-200 text-green-700' },
+  // Status info based on column role
+  const ROLE_STATUS_INFO = {
+    form_pending: { label: 'Aguardando preenchimento', color: 'bg-gray-50 border-gray-200 text-gray-700' },
+    post_form:    { label: 'Formulário enviado', color: 'bg-green-50 border-green-200 text-green-700' },
+    approval:     { label: 'Aguardando sua aprovação', color: 'bg-amber-50 border-amber-200 text-amber-700' },
+    finished:     { label: 'Site entregue!', color: 'bg-green-50 border-green-200 text-green-700' },
   }
+  const defaultStatusInfo = { label: 'Site em desenvolvimento', color: 'bg-blue-50 border-blue-200 text-blue-700' }
+  const statusInfo = ROLE_STATUS_INFO[statusRole] || defaultStatusInfo
 
   if (reviewActionState === 'approved') {
     return (
@@ -967,11 +972,8 @@ export default function FormWizard() {
 
   // Show summary for any status where form was already filled
   if (hasFilled && !isEditing && !submitted) {
-    const statusInfo = STATUS_INFO[status] || STATUS_INFO.formulario_preenchido
-    // Show split preview (site left + form right) from 2nd column onwards
-    const kanbanCols = (() => { try { const s = localStorage.getItem('kanban_columns'); return s ? JSON.parse(s) : null } catch { return null } })()
-    const colIdx = kanbanCols ? kanbanCols.findIndex(c => c.key === status) : -1
-    const showSplitPreview = colIdx >= 1 || (!kanbanCols && status !== 'formulario_pendente')
+    // Show split preview from post_form column onwards (not form_pending)
+    const showSplitPreview = status !== formPendingKey && status !== postFormKey
     const previewUrl = `/api/preview.php?token=${token}`
 
     const renderValue = (val) => {

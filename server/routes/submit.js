@@ -15,19 +15,22 @@ router.post('/', async (req, res) => {
   const client = rows[0];
   if (!client) return res.status(404).json({ error: 'Client not found' });
 
-  // Get kanban columns to determine which statuses allow editing
-  const [cols] = await db.query('SELECT `key`, position FROM kanban_columns ORDER BY position ASC');
-  const firstKey = cols.length ? cols[0].key : 'formulario_pendente';
-  const secondKey = cols.length > 1 ? cols[1].key : 'formulario_preenchido';
+  // Get kanban columns with roles
+  const [cols] = await db.query('SELECT `key`, position, role FROM kanban_columns ORDER BY position ASC');
+  const formPendingCol = cols.find(c => c.role === 'form_pending') || cols[0];
+  const postFormCol = cols.find(c => c.role === 'post_form') || cols[1];
 
-  // Allow editing from first column or second column (form filled)
-  const editableKeys = [firstKey, secondKey];
+  const formPendingKey = formPendingCol?.key || 'formulario_pendente';
+  const postFormKey = postFormCol?.key || 'formulario_preenchido';
+
+  // Allow editing from form_pending or post_form columns
+  const editableKeys = [formPendingKey, postFormKey];
   if (!editableKeys.includes(client.status)) {
     return res.status(400).json({ error: 'Formulário não pode ser editado neste momento' });
   }
 
-  const isEdit = client.status === secondKey;
-  const targetStatus = next_status || secondKey;
+  const isEdit = client.status === postFormKey;
+  const targetStatus = next_status || postFormKey;
 
   await db.execute(
     'UPDATE clients SET form_data = ?, status = ?, updated_at = NOW() WHERE id = ?',

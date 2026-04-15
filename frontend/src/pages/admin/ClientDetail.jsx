@@ -181,23 +181,28 @@ function StatusBadge({ status }) {
   )
 }
 
-function ClientStatusTags({ status, formOpenedAt }) {
+function ClientStatusTags({ status, formOpenedAt, hasFormData }) {
   const steps = usePipelineSteps()
   const idx = steps.findIndex(s => s.key === status)
   const finalCol = steps.find(s => s.is_final)
   const finalIdx = finalCol ? steps.findIndex(s => s.key === finalCol.key) : steps.length - 1
-  const isFormFilled = idx >= 1
+  const isFormFilled = !!hasFormData
   const isInProgress = idx >= 1 && (finalIdx === -1 || idx < finalIdx)
   const isFinished = idx >= 0 && idx === finalIdx
 
+  // Form status: not sent > opened > filled (mutually exclusive)
+  const formTag = isFormFilled
+    ? { label: 'Formulário enviado', color: 'bg-green-50 text-green-600', icon: <Check className="w-3 h-3" /> }
+    : formOpenedAt
+      ? { label: 'Formulário aberto', color: 'bg-purple-50 text-purple-600', icon: <Eye className="w-3 h-3" /> }
+      : { label: 'Formulário não enviado', color: 'bg-gray-100 text-gray-500', icon: <AlertCircle className="w-3 h-3" /> }
+
   return (
     <div className="flex flex-col items-end gap-1">
-      {isFormFilled && (
-        <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-1 rounded-full bg-blue-50 text-blue-600">
-          <Check className="w-3 h-3" />
-          Formulário Preenchido
-        </span>
-      )}
+      <span className={`inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-1 rounded-full ${formTag.color}`}>
+        {formTag.icon}
+        {formTag.label}
+      </span>
       {isInProgress && (
         <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-1 rounded-full bg-amber-50 text-amber-600">
           <Clock className="w-3 h-3" />
@@ -208,17 +213,6 @@ function ClientStatusTags({ status, formOpenedAt }) {
         <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-1 rounded-full bg-green-50 text-green-600">
           <CheckCircle2 className="w-3 h-3" />
           Finalizado
-        </span>
-      )}
-      {idx === 0 && (
-        <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-1 rounded-full bg-gray-100 text-gray-500">
-          Aguardando formulário
-        </span>
-      )}
-      {idx === 0 && formOpenedAt && (
-        <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-1 rounded-full bg-purple-50 text-purple-600">
-          <Eye className="w-3 h-3" />
-          Formulário Aberto
         </span>
       )}
     </div>
@@ -693,10 +687,17 @@ function RevisionTimeline({ revisions, formOpenedAt }) {
     })
   }
 
-  const getRevisionIcon = (type) => {
+  const getRevisionIcon = (rev) => {
+    const type = rev?.action || rev?.type || rev
+    const msg = rev?.message || ''
     switch (type) {
-      case 'approve': return <CheckCircle2 className="w-4 h-4 text-green-500" />
+      case 'approve': case 'approval': return <CheckCircle2 className="w-4 h-4 text-green-500" />
       case 'request_revision': return <XCircle className="w-4 h-4 text-red-500" />
+      case 'revision_request':
+        if (msg.includes('Etapa mudada') || msg.includes('Status alterado') || msg.includes('Movido para')) {
+          return <ArrowRight className="w-4 h-4 text-indigo-500" />
+        }
+        return <XCircle className="w-4 h-4 text-red-500" />
       case 'status_change': return <ArrowRight className="w-4 h-4 text-indigo-500" />
       case 'link_opened': return <Eye className="w-4 h-4 text-emerald-500" />
       default: return <MessageSquare className="w-4 h-4 text-blue-500" />
@@ -709,7 +710,7 @@ function RevisionTimeline({ revisions, formOpenedAt }) {
     switch (t) {
       case 'approve': return 'Site Aprovado'
       case 'request_revision': return 'Alteração Solicitada'
-      case 'revision_request': return msg.includes('Status alterado') ? 'Etapa alterada' : 'Alteração Solicitada'
+      case 'revision_request': return (msg.includes('Status alterado') || msg.includes('Movido para') || msg.includes('Etapa mudada')) ? 'Etapa atualizada' : 'Alteração Solicitada'
       case 'submit': return msg.includes('atualizado') ? 'Formulário atualizado' : 'Formulário preenchido'
       case 'edit': return 'Formulário atualizado'
       case 'publish': return 'Site publicado'
@@ -758,7 +759,7 @@ function RevisionTimeline({ revisions, formOpenedAt }) {
             <div key={rev.id || i} className="flex gap-3">
               <div className="flex flex-col items-center">
                 <div className="w-8 h-8 rounded-full bg-gray-50 border-2 border-gray-100 flex items-center justify-center flex-shrink-0">
-                  {getRevisionIcon(rev.action || rev.type)}
+                  {getRevisionIcon(rev)}
                 </div>
                 {i < allEvents.length - 1 && <div className="w-0.5 h-full bg-gray-100 mt-1" />}
               </div>
@@ -1079,7 +1080,7 @@ export default function ClientDetail() {
             <div className="card">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-semibold text-gray-900">Informações do Cliente</h3>
-                <ClientStatusTags status={client?.status} formOpenedAt={client?.form_opened_at} />
+                <ClientStatusTags status={client?.status} formOpenedAt={client?.form_opened_at} hasFormData={client?.form_data && Object.keys(client.form_data).length > 0} />
               </div>
               <div>
                 <InfoRow icon={User} label="Nome" value={client?.name} />

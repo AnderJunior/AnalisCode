@@ -60,7 +60,8 @@ const { getDB } = require('./db');
     "ALTER TABLE clients ADD COLUMN form_id INT NULL DEFAULT NULL",
     "ALTER TABLE clients MODIFY COLUMN status VARCHAR(100) DEFAULT 'formulario_pendente'",
     "ALTER TABLE clients MODIFY COLUMN template_id INT NULL DEFAULT NULL",
-    "CREATE TABLE IF NOT EXISTS kanban_columns (id INT AUTO_INCREMENT PRIMARY KEY, `key` VARCHAR(100) UNIQUE NOT NULL, label VARCHAR(255) NOT NULL, color VARCHAR(20) DEFAULT '#6366f1', position INT DEFAULT 0, is_final BOOLEAN DEFAULT FALSE)",
+    "CREATE TABLE IF NOT EXISTS kanban_columns (id INT AUTO_INCREMENT PRIMARY KEY, `key` VARCHAR(100) UNIQUE NOT NULL, label VARCHAR(255) NOT NULL, color VARCHAR(20) DEFAULT '#6366f1', position INT DEFAULT 0, is_final BOOLEAN DEFAULT FALSE, role VARCHAR(50) DEFAULT NULL)",
+    "ALTER TABLE kanban_columns ADD COLUMN role VARCHAR(50) DEFAULT NULL",
   ];
   for (const sql of migrations) {
     try { await db.execute(sql); } catch {}

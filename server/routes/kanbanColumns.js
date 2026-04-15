@@ -5,13 +5,13 @@ const { requireAdmin } = require('../middleware/auth');
 const router = express.Router();
 
 const DEFAULT_COLUMNS = [
-  { key: 'formulario_pendente',   label: 'Form. Pendente',    color: '#9ca3af', position: 0, is_final: false },
-  { key: 'formulario_preenchido', label: 'Form. Preenchido',  color: '#3b82f6', position: 1, is_final: false },
-  { key: 'em_edicao',             label: 'Em Edição',         color: '#6366f1', position: 2, is_final: false },
-  { key: 'aguardando_aprovacao',  label: 'Aguard. Aprovação', color: '#f59e0b', position: 3, is_final: false },
-  { key: 'alteracao_solicitada',  label: 'Alter. Solicitada', color: '#f97316', position: 4, is_final: false },
-  { key: 'aprovado',              label: 'Aprovado',          color: '#22c55e', position: 5, is_final: false },
-  { key: 'publicado',             label: 'Entregue',          color: '#10b981', position: 6, is_final: true },
+  { key: 'formulario_pendente',   label: 'Form. Pendente',    color: '#9ca3af', position: 0, is_final: false, role: 'form_pending' },
+  { key: 'formulario_preenchido', label: 'Form. Preenchido',  color: '#3b82f6', position: 1, is_final: false, role: 'post_form' },
+  { key: 'em_edicao',             label: 'Em Edição',         color: '#6366f1', position: 2, is_final: false, role: null },
+  { key: 'aguardando_aprovacao',  label: 'Aguard. Aprovação', color: '#f59e0b', position: 3, is_final: false, role: 'approval' },
+  { key: 'alteracao_solicitada',  label: 'Alter. Solicitada', color: '#f97316', position: 4, is_final: false, role: null },
+  { key: 'aprovado',              label: 'Aprovado',          color: '#22c55e', position: 5, is_final: false, role: null },
+  { key: 'publicado',             label: 'Entregue',          color: '#10b981', position: 6, is_final: true,  role: 'finished' },
 ];
 
 // GET - List all columns (ordered)
@@ -22,8 +22,8 @@ router.get('/', requireAdmin, async (req, res) => {
     // Seed defaults
     for (const col of DEFAULT_COLUMNS) {
       await db.execute(
-        'INSERT IGNORE INTO kanban_columns (`key`, label, color, position, is_final) VALUES (?, ?, ?, ?, ?)',
-        [col.key, col.label, col.color, col.position, col.is_final]
+        'INSERT IGNORE INTO kanban_columns (`key`, label, color, position, is_final, role) VALUES (?, ?, ?, ?, ?, ?)',
+        [col.key, col.label, col.color, col.position, col.is_final, col.role]
       );
     }
     const [seeded] = await db.query('SELECT * FROM kanban_columns ORDER BY position ASC');
@@ -51,7 +51,7 @@ router.post('/', requireAdmin, async (req, res) => {
 // PUT - Update column
 router.put('/:key', requireAdmin, async (req, res) => {
   const db = getDB();
-  const { label, color, position, is_final } = req.body;
+  const { label, color, position, is_final, role } = req.body;
   const sets = [];
   const vals = [];
   if (label !== undefined) { sets.push('label = ?'); vals.push(label); }
@@ -59,10 +59,21 @@ router.put('/:key', requireAdmin, async (req, res) => {
   if (position !== undefined) { sets.push('position = ?'); vals.push(position); }
   if (is_final !== undefined) {
     if (is_final) {
-      // Remove final from all others first
       await db.execute('UPDATE kanban_columns SET is_final = FALSE');
     }
     sets.push('is_final = ?'); vals.push(is_final);
+  }
+  if (role !== undefined) {
+    // Unique roles: clear from other columns first
+    if (role && ['form_pending', 'post_form', 'approval', 'finished'].includes(role)) {
+      await db.execute('UPDATE kanban_columns SET role = NULL WHERE role = ?', [role]);
+    }
+    sets.push('role = ?'); vals.push(role || null);
+    // Sync is_final with finished role
+    if (role === 'finished') {
+      await db.execute('UPDATE kanban_columns SET is_final = FALSE');
+      sets.push('is_final = TRUE');
+    }
   }
   if (sets.length === 0) return res.json({ success: true });
   vals.push(req.params.key);
