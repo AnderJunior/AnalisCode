@@ -6,7 +6,16 @@
       "Bash(where xampp:*)",
       "Read(//c/xampp/**)",
       "Read(//c//**)",
-      "mcp__Claude_Preview__preview_start"
+      "mcp__Claude_Preview__preview_start",
+      "Bash(mysql -u root -e \"SELECT 1\")",
+      "Bash(curl -s http://localhost:3000/api/auth.php)",
+      "Bash(curl -v http://localhost:3000/)",
+      "Bash(C:/Sites/AnalisCode/server/.env:*)",
+      "Bash(npm run:*)",
+      "Bash(taskkill //F //FI \"WINDOWTITLE eq node*\")",
+      "Bash(npx kill-port:*)",
+      "Bash(fuser -k 3000/tcp)",
+      "Bash(node server.js)"
     ]
   }
 }

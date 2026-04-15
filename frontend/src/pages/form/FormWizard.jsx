@@ -566,6 +566,48 @@ function FieldRenderer({ field, value, onChange, token, disabled, formData }) {
   if (type === 'choice' || type === 'radio') {
     return <ChoiceField field={field} value={value} onChange={onChange} disabled={disabled} />
   }
+  if (type === 'slider') {
+    const min = field.min ?? 0
+    const max = field.max ?? 100
+    const step = field.step ?? 1
+    const val = value ?? min
+    return (
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <span className="text-xs text-gray-400">{min}</span>
+          <span className="text-lg font-bold text-primary-600">{val}</span>
+          <span className="text-xs text-gray-400">{max}</span>
+        </div>
+        <input
+          type="range"
+          min={min}
+          max={max}
+          step={step}
+          value={val}
+          onChange={e => onChange(field.key, parseInt(e.target.value))}
+          disabled={disabled}
+          className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary-600"
+        />
+      </div>
+    )
+  }
+  if (type === 'select') {
+    return (
+      <select
+        value={value || ''}
+        onChange={e => onChange(field.key, e.target.value)}
+        disabled={disabled}
+        className="input-field"
+      >
+        <option value="">Selecione...</option>
+        {(field.options || []).map((opt, i) => (
+          <option key={i} value={typeof opt === 'string' ? opt : opt.value}>
+            {typeof opt === 'string' ? opt : opt.label}
+          </option>
+        ))}
+      </select>
+    )
+  }
   // text, email, tel, url, number, etc.
   return <InputField field={field} value={value} onChange={onChange} disabled={disabled} />
 }
@@ -1266,11 +1308,13 @@ export default function FormWizard() {
           </div>
 
           {/* Fields */}
-          <div className="space-y-7">
+          <div className="flex flex-wrap gap-4">
             {visibleFields.map((field) => {
+              const w = parseInt(field.width) || 100
+              const widthStyle = w < 100 ? { width: `calc(${w}% - ${w < 50 ? 12 : 8}px)` } : { width: '100%' }
               if (field.type === 'info') {
                 return (
-                  <div key={field.key}>
+                  <div key={field.key} style={widthStyle}>
                     <FieldRenderer field={field} value={formData[field.key]} onChange={handleChange} token={token} disabled={submitting} formData={formData} />
                   </div>
                 )
@@ -1278,7 +1322,7 @@ export default function FormWizard() {
               if (field.type === 'toggle') {
                 const isOn = formData[field.key] === true || formData[field.key] === 'true' || formData[field.key] === 'sim'
                 return (
-                  <div key={field.key} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-4">
+                  <div key={field.key} style={widthStyle} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-4">
                     <div className="flex items-center justify-between gap-4">
                       <label htmlFor={field.key} className="text-base font-semibold text-gray-900">
                         {field.label}
@@ -1310,7 +1354,7 @@ export default function FormWizard() {
               const hasSuggest = field.type === 'list' && field.suggest
               const suggestActive = hasSuggest && formData[field.key + '_suggest'] === true
               return (
-                <div key={field.key} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                <div key={field.key} style={widthStyle} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
                   <div className={`flex items-center ${hasSuggest ? 'justify-between' : ''} mb-1`}>
                     {field.label && (
                       <label

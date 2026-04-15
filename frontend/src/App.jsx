@@ -7,6 +7,8 @@ import ClientDetail from './pages/admin/ClientDetail.jsx'
 import Clients from './pages/admin/Clients.jsx'
 import Templates from './pages/admin/Templates.jsx'
 import Workspace from './pages/admin/Workspace.jsx'
+import Forms from './pages/admin/Forms.jsx'
+import FormBuilder from './pages/admin/FormBuilder.jsx'
 import FormWizard from './pages/form/FormWizard.jsx'
 import ReviewPage from './pages/review/ReviewPage.jsx'
 
@@ -36,6 +38,14 @@ export default function App() {
           <Route
             path="/admin/workspace"
             element={<ProtectedRoute><Workspace /></ProtectedRoute>}
+          />
+          <Route
+            path="/admin/formularios"
+            element={<ProtectedRoute><Forms /></ProtectedRoute>}
+          />
+          <Route
+            path="/admin/formularios/:id"
+            element={<ProtectedRoute><FormBuilder /></ProtectedRoute>}
           />
           <Route
             path="/admin/cliente/:id"

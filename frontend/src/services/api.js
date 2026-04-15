@@ -199,3 +199,40 @@ export function getFormUrl(token) {
 export function getReviewUrl(reviewToken) {
   return `${window.location.origin}/aprovar/${reviewToken}`
 }
+
+// Forms CRUD
+export async function getForms() {
+  return request('/api/forms')
+}
+
+export async function getForm(id) {
+  return request(`/api/forms/${id}`)
+}
+
+export async function createForm(data) {
+  if (!csrfToken) await getCSRF()
+  return request('/api/forms', {
+    method: 'POST',
+    body: JSON.stringify({ ...data, csrf_token: csrfToken }),
+  })
+}
+
+export async function updateForm(id, data) {
+  if (!csrfToken) await getCSRF()
+  return request(`/api/forms/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify({ ...data, csrf_token: csrfToken }),
+  })
+}
+
+export async function deleteForm(id) {
+  return request(`/api/forms/${id}`, { method: 'DELETE' })
+}
+
+export async function assignFormToClient(clientId, formId) {
+  if (!csrfToken) await getCSRF()
+  return request('/api/clients.php', {
+    method: 'POST',
+    body: JSON.stringify({ action: 'assign_form', id: clientId, form_id: formId, csrf_token: csrfToken }),
+  })
+}

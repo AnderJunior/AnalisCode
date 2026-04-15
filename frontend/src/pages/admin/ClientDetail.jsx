@@ -534,6 +534,60 @@ function FormDataSection({ formData, schema }) {
   )
 }
 
+function FormSelector({ client, onUpdate }) {
+  const [forms, setForms] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [updating, setUpdating] = useState(false)
+
+  useEffect(() => {
+    api.getForms().then(setForms).catch(() => {}).finally(() => setLoading(false))
+  }, [])
+
+  const handleChange = async (formId) => {
+    setUpdating(true)
+    try {
+      await api.assignFormToClient(client.id, formId || null)
+      onUpdate(formId || null)
+    } catch (err) {
+      alert(err.message)
+    } finally {
+      setUpdating(false)
+    }
+  }
+
+  return (
+    <div className="card">
+      <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+        <FileText className="w-4 h-4 text-gray-400" />
+        Formulário
+      </h3>
+      {loading ? (
+        <div className="flex items-center justify-center py-4"><Loader2 className="w-4 h-4 animate-spin text-gray-400" /></div>
+      ) : (
+        <div>
+          <select
+            value={client?.form_id || ''}
+            onChange={e => handleChange(e.target.value ? parseInt(e.target.value) : null)}
+            disabled={updating}
+            className="input-field text-sm"
+          >
+            <option value="">Schema do template (padrão)</option>
+            {forms.map(f => (
+              <option key={f.id} value={f.id}>{f.name}</option>
+            ))}
+          </select>
+          {client?.form_id && (
+            <a href={`/admin/formularios/${client.form_id}`} className="text-xs text-primary-600 hover:underline mt-2 inline-block">
+              Editar formulário
+            </a>
+          )}
+          {client?.form_name && !client?.form_id && null}
+        </div>
+      )}
+    </div>
+  )
+}
+
 function RevisionTimeline({ revisions, formOpenedAt }) {
   const formatDate = (dateStr) => {
     return new Date(dateStr).toLocaleDateString('pt-BR', {
@@ -935,6 +989,8 @@ export default function ClientDetail() {
                 <InfoRow icon={Clock} label="Cadastrado em" value={formatDate(client?.created_at)} />
               </div>
             </div>
+
+            <FormSelector client={client} onUpdate={(formId) => setClient(prev => ({ ...prev, form_id: formId }))} />
 
             <div className="card">
               <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">

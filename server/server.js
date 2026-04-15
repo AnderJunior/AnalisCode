@@ -45,6 +45,7 @@ app.use('/api/preview.php', require('./routes/preview'));
 app.use('/api/approve.php', require('./routes/approve'));
 app.use('/api/template-preview.php', require('./routes/templatePreview'));
 app.use('/api/templates', require('./routes/templates'));
+app.use('/api/forms', require('./routes/forms'));
 app.use('/form', require('./routes/form'));
 
 // Auto-migrations
@@ -54,6 +55,8 @@ const { getDB } = require('./db');
   const migrations = [
     "ALTER TABLE revisions MODIFY COLUMN type ENUM('submit','revision_request','approval','publish') NOT NULL",
     "ALTER TABLE clients ADD COLUMN form_opened_at TIMESTAMP NULL DEFAULT NULL",
+    "CREATE TABLE IF NOT EXISTS forms (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255) NOT NULL, description TEXT, schema JSON, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP)",
+    "ALTER TABLE clients ADD COLUMN form_id INT NULL DEFAULT NULL",
   ];
   for (const sql of migrations) {
     try { await db.execute(sql); } catch {}

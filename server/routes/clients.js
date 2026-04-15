@@ -45,7 +45,7 @@ router.get('/', async (req, res) => {
   if (action === 'detail') {
     const id = parseInt(req.query.id) || 0;
     const [rows] = await db.execute(
-      'SELECT c.*, t.name as template_name, t.slug as template_slug, t.niche FROM clients c JOIN templates t ON c.template_id = t.id WHERE c.id = ?',
+      'SELECT c.*, t.name as template_name, t.slug as template_slug, t.niche, f.name as form_name FROM clients c LEFT JOIN templates t ON c.template_id = t.id LEFT JOIN forms f ON c.form_id = f.id WHERE c.id = ?',
       [id]
     );
     const client = rows[0];
@@ -152,6 +152,14 @@ router.post('/', async (req, res) => {
     }
     await db.execute('UPDATE clients SET site_data = ?, updated_at = NOW() WHERE id = ?', [JSON.stringify(site_data), id]);
     await db.execute("INSERT INTO revisions (client_id, type, message) VALUES (?, 'publish', 'Atualização publicada pelo admin')", [id]);
+    return res.json({ success: true });
+  }
+
+  if (action === 'assign_form') {
+    const id = parseInt(req.body.id) || 0;
+    const form_id = req.body.form_id;
+    if (!id) return res.status(400).json({ error: 'ID inválido' });
+    await db.execute('UPDATE clients SET form_id = ? WHERE id = ?', [form_id || null, id]);
     return res.json({ success: true });
   }
 
