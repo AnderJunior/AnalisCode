@@ -5,3 +5,5 @@ frontend/node_modules/
 server/node_modules/
 .vite/
 frontend/.vite/
+deploy.sh
+install.php
