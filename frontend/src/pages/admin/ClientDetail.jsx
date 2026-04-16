@@ -876,24 +876,22 @@ function ZipUploader({ client, revisions }) {
           </div>
         </div>
 
-        {/* Revision logs - collapsible horizontal */}
-        {revisions.length > 0 && (
-          <div className="border-t border-gray-100 px-4 py-2 flex items-center gap-3 overflow-x-auto">
-            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide flex-shrink-0">Histórico</p>
-            {revisions.map((rev, i) => {
-              const cfg = REV_TYPES[rev.type] || { label: rev.type || 'Evento', dot: 'bg-gray-300' }
-              const isEditSubmit = rev.type === 'submit' && rev.message && rev.message.toLowerCase().includes('atualizado')
-              const displayLabel = isEditSubmit ? 'Edição enviada' : cfg.label
-              return (
+        {/* Revision logs - only ZIP uploads */}
+        {(() => {
+          const zipRevisions = revisions.filter(r => r.type === 'publish')
+          return zipRevisions.length > 0 && (
+            <div className="border-t border-gray-100 px-4 py-2 flex items-center gap-3 overflow-x-auto">
+              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide flex-shrink-0">Histórico</p>
+              {zipRevisions.map((rev, i) => (
                 <div key={rev.id || i} className="flex items-center gap-1.5 flex-shrink-0 bg-gray-50 rounded-lg px-2.5 py-1.5" title={rev.message || ''}>
-                  <div className={`w-1.5 h-1.5 rounded-full ${isEditSubmit ? 'bg-blue-400' : cfg.dot}`} />
-                  <span className="text-xs text-gray-600">{displayLabel}</span>
+                  <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                  <span className="text-xs text-gray-600">ZIP atualizado</span>
                   <span className="text-[10px] text-gray-400">{formatDate(rev.created_at)}</span>
                 </div>
-              )
-            })}
-          </div>
-        )}
+              ))}
+            </div>
+          )
+        })()}
       </div>
 
       {/* Full-width site preview */}
