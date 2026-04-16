@@ -1216,15 +1216,6 @@ export default function FormWizard() {
                   </p>
                 </div>
               </div>
-              {canEdit && (
-                <button
-                  onClick={() => { setIsEditing(true); setCurrentStep(0) }}
-                  className="flex items-center gap-2 px-4 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-sm font-semibold shadow-sm hover:shadow transition-all"
-                >
-                  <Pencil className="w-4 h-4" />
-                  Editar respostas
-                </button>
-              )}
             </div>
           </div>
         </div>

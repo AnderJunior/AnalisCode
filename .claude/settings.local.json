@@ -32,7 +32,9 @@
       "Bash(ssh -o StrictHostKeyChecking=no root@149.102.143.1 \"cd /opt/sites-eaivendeu/analiscode && git pull origin main 2>&1 | tail -10\")",
       "Bash(ssh -o StrictHostKeyChecking=no root@149.102.143.1 \"docker service update --force analiscode_analiscode 2>&1 | tail -3\")",
       "Bash(c:/xampp/mysql/bin/mysql -u root analiscode -e \"SELECT id, username FROM admins;\")",
-      "Bash(c:/xampp/mysql/bin/mysql -u root analiscode -e \"ALTER TABLE kanban_columns ADD COLUMN role VARCHAR\\(50\\) DEFAULT NULL;\")"
+      "Bash(c:/xampp/mysql/bin/mysql -u root analiscode -e \"ALTER TABLE kanban_columns ADD COLUMN role VARCHAR\\(50\\) DEFAULT NULL;\")",
+      "Bash(ssh -o StrictHostKeyChecking=no root@149.102.143.1 \"cd /opt/sites-eaivendeu/analiscode && git pull origin main && docker build -t analiscode/sites:latest . 2>&1 | tail -3 && docker service update --force analiscode_analiscode 2>&1 | tail -2\")",
+      "Bash(ssh -o StrictHostKeyChecking=no root@149.102.143.1 \"cd /opt/sites-eaivendeu/analiscode && git checkout -- deploy.sh && git pull origin main && docker build -t analiscode/sites:latest . 2>&1 | tail -3 && docker service update --force analiscode_analiscode 2>&1 | tail -2\")"
     ]
   }
 }

@@ -174,7 +174,8 @@ function FieldCard({ field, onUpdate, onDelete, onMoveUp, onMoveDown, isFirst, i
               <label className="block text-xs font-medium text-gray-500 mb-1">Opções (uma por linha)</label>
               <textarea
                 value={(field.options || []).join('\n')}
-                onChange={e => onUpdate({ ...field, options: e.target.value.split('\n').filter(o => o.trim()) })}
+                onChange={e => onUpdate({ ...field, options: e.target.value.split('\n') })}
+                onBlur={e => onUpdate({ ...field, options: e.target.value.split('\n').filter(o => o.trim()) })}
                 className="input-field text-sm"
                 rows={4}
                 placeholder={"Opção 1\nOpção 2\nOpção 3"}

@@ -434,7 +434,11 @@ function FormDataSection({ formData, schema }) {
   const getLabel = (key, parentKey) => {
     if (parentKey && fieldLabels[`${parentKey}::${key}`]) return fieldLabels[`${parentKey}::${key}`]
     if (fieldLabels[key]) return fieldLabels[key]
-    return LABELS[key] || LABELS[key.split('.').pop()] || key.replace(/[_.]/g, ' ')
+    if (LABELS[key]) return LABELS[key]
+    const lastPart = key.split('.').pop()
+    if (LABELS[lastPart]) return LABELS[lastPart]
+    // Capitalize and clean up key as last resort
+    return lastPart.replace(/[_.]/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
   }
 
   if (!formData) {
@@ -506,15 +510,56 @@ function FormDataSection({ formData, schema }) {
     groupedByStep.push({ step: { title: 'Respostas' }, entries: flatEntries, suggests: suggestKeys })
   }
 
+  const handleDownloadTxt = () => {
+    let txt = ''
+    groupedByStep.forEach(group => {
+      txt += `=== ${group.step.title} ===\n\n`
+      group.entries.forEach(entry => {
+        if (entry.type === 'list' && Array.isArray(entry.value)) {
+          txt += `${getLabel(entry.key)}:\n`
+          entry.value.forEach((item, idx) => {
+            if (typeof item === 'object') {
+              Object.entries(item).filter(([,v]) => v).forEach(([k, v]) => {
+                txt += `  ${getLabel(k, entry.key)}: ${v}\n`
+              })
+            } else {
+              txt += `  - ${item}\n`
+            }
+            if (idx < entry.value.length - 1) txt += '\n'
+          })
+        } else {
+          txt += `${getLabel(entry.key)}: ${entry.value}\n`
+        }
+      })
+      txt += '\n'
+    })
+    const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'formulario-respostas.txt'
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   return (
     <div className="card">
-      <button onClick={() => setExpanded(!expanded)} className="w-full flex items-center justify-between">
-        <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-          <FileText className="w-4 h-4 text-gray-400" />
-          Dados do Formulário
+      <div className="flex items-center justify-between">
+        <button onClick={() => setExpanded(!expanded)} className="flex-1 flex items-center gap-2">
+          <h3 className="font-semibold text-gray-900 flex items-center gap-2">
+            <FileText className="w-4 h-4 text-gray-400" />
+            Dados do Formulário
         </h3>
-        {expanded ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
-      </button>
+        </button>
+        <div className="flex items-center gap-1">
+          <button onClick={handleDownloadTxt} className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all" title="Baixar respostas em TXT">
+            <Download className="w-4 h-4" />
+          </button>
+          <button onClick={() => setExpanded(!expanded)} className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all">
+            {expanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          </button>
+        </div>
+      </div>
 
       {expanded && (
         <div className="mt-4 space-y-4">
@@ -936,15 +981,20 @@ export default function ClientDetail() {
       setRevisions(data.revisions || [])
       setStatusValue(data.client.status)
 
-      // Load template schema for field labels
-      if (data.client.template_slug) {
+      // Load schema: custom form first, then template schema
+      if (data.client.form_id) {
+        try {
+          const formData = await api.getForm(data.client.form_id)
+          if (formData?.schema) setTemplateSchema(formData.schema)
+        } catch (e) {}
+      } else if (data.client.template_slug) {
         try {
           const schemaRes = await fetch(`/templates/${data.client.template_slug}/schema.json`)
           if (schemaRes.ok) {
             const schema = await schemaRes.json()
             setTemplateSchema(schema)
           }
-        } catch (e) { /* schema not available, will use fallback labels */ }
+        } catch (e) {}
       }
     } catch (err) {
       setError(err.message || 'Erro ao carregar cliente')
