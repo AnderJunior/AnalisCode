@@ -616,12 +616,12 @@ function FormDataSection({ formData, schema }) {
                       </div>
                     </>
                   ) : (
-                    <>
-                      <p className="text-xs text-gray-400 font-medium">{getLabel(entry.key)}</p>
-                      <p className="text-sm text-gray-800 font-medium mt-0.5">
+                    <div className="flex justify-between items-start gap-4">
+                      <p className="text-xs text-gray-400 font-medium max-w-[55%]">{getLabel(entry.key)}</p>
+                      <p className="text-sm text-gray-800 font-medium text-right">
                         {entry.value === 'true' ? 'Sim' : entry.value === 'false' ? 'Não' : entry.value}
                       </p>
-                    </>
+                    </div>
                   )}
                 </div>
               ))}

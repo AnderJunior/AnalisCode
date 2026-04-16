@@ -1064,11 +1064,11 @@ export default function FormWizard() {
                   const isLongValue = typeof val === 'string' && val.length > 40
                   const useBlock = isListOrImg || isLongValue
                   return (
-                    <div key={field.key} className={`py-3 first:pt-0 last:pb-0 ${useBlock ? 'space-y-1.5' : 'flex gap-4 items-start'}`}>
-                      <span className={`text-gray-400 text-sm ${useBlock ? 'block' : 'flex-shrink-0 w-40'}`}>
+                    <div key={field.key} className={`py-3 first:pt-0 last:pb-0 ${useBlock ? 'space-y-1.5' : 'flex justify-between gap-4 items-start'}`}>
+                      <span className={`text-gray-400 text-sm ${useBlock ? 'block' : 'flex-shrink-0 max-w-[55%]'}`}>
                         {field.label}
                       </span>
-                      <span className="min-w-0 break-words">{renderValue(val)}</span>
+                      <span className={`min-w-0 break-words ${useBlock ? '' : 'text-right'}`}>{renderValue(val)}</span>
                     </div>
                   )
                 })}
