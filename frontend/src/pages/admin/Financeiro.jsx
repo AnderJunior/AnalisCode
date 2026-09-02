@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   Wallet, Loader2, AlertCircle, GripVertical, X, Pencil, Clock, List, LayoutGrid, ChevronDown,
@@ -22,12 +22,13 @@ function sumAmounts(clients) {
   return clients.reduce((total, c) => total + (Number(c.payment_amount) || 0), 0)
 }
 
-// Mês em que o card entra no filtro:
-//   recebido  -> quando o dinheiro entrou de fato;
-//   os demais -> o prazo de entrega, como previsão de recebimento.
-// Sem nenhuma das duas datas, cai no mês do cadastro para não sumir da tela.
-function referenceMonth(client) {
-  const dateOnly = (client.payment_status === 'recebido' && client.payment_received_at) || client.deadline_date
+// Mês do recebimento. O filtro de mês vale SÓ para a coluna "Recebido":
+// pendências e NF enviada são saldo em aberto, não pertencem a mês nenhum
+// e some-las ao trocar de mês esconderia trabalho ainda por receber.
+// Cards recebidos antes de existir payment_received_at caem no prazo de
+// entrega e, na falta dele, no cadastro.
+function receivedMonth(client) {
+  const dateOnly = client.payment_received_at || client.deadline_date
   if (dateOnly) return String(dateOnly).slice(0, 7)
   if (!client.created_at) return null
   const d = new Date(client.created_at)
@@ -287,6 +288,18 @@ function AmountModal({ client, targetColumn, onCancel, onConfirm }) {
   )
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+  const inputRef = useRef(null)
+
+  // O autoFocus do JSX perde a corrida: ao terminar o arraste o dnd-kit
+  // devolve o foco ao card. O rAF coloca o foco depois disso, e o select
+  // deixa o valor existente pronto para ser substituido.
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => {
+      inputRef.current?.focus()
+      inputRef.current?.select()
+    })
+    return () => cancelAnimationFrame(frame)
+  }, [])
 
   const parsed = parseBRL(value)
 
@@ -331,6 +344,7 @@ function AmountModal({ client, targetColumn, onCancel, onConfirm }) {
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">R$</span>
               <input
+                ref={inputRef}
                 type="text"
                 inputMode="decimal"
                 autoFocus
@@ -399,25 +413,28 @@ export default function Financeiro() {
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }))
 
-  // O mês atual entra sempre na lista, mesmo vazio — senão a seleção padrão
-  // apontaria para uma opção inexistente.
-  const monthOptions = [...new Set([currentMonth(), ...clients.map(referenceMonth).filter(Boolean)])]
-    .sort()
-    .reverse()
-
-  const filtered = month === ALL_MONTHS
-    ? clients
-    : clients.filter((c) => referenceMonth(c) === month)
+  // Só os recebidos têm mês. O mês atual entra sempre na lista, mesmo vazio,
+  // senão a seleção padrão apontaria para uma opção inexistente.
+  const monthOptions = [...new Set([
+    currentMonth(),
+    ...clients.filter((c) => c.payment_status === 'recebido').map(receivedMonth).filter(Boolean),
+  ])].sort().reverse()
 
   const grouped = {}
   PAYMENT_COLUMNS.forEach((col) => { grouped[col.key] = [] })
-  filtered.forEach((client) => {
+  clients.forEach((client) => {
     const key = client.payment_status || 'pendente'
+    if (key === 'recebido') {
+      // Único grupo que o mês filtra.
+      if (month === ALL_MONTHS || receivedMonth(client) === month) grouped.recebido.push(client)
+      return
+    }
     if (grouped[key]) grouped[key].push(client)
     else grouped.pendente.push(client)
   })
 
   const totals = {
+    // Saldo em aberto: sempre o total, independente do mês selecionado.
     receber: sumAmounts([...grouped.pendente, ...grouped.nf_enviada]),
     recebido: sumAmounts(grouped.recebido),
   }
@@ -490,10 +507,12 @@ export default function Financeiro() {
             <div className="bg-white rounded-xl border border-gray-100 px-5 py-3">
               <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">A receber</p>
               <p className="text-lg font-bold text-gray-800 mt-0.5">{formatBRL(totals.receber)}</p>
+              <p className="text-[10px] text-gray-300 mt-0.5">Todos os meses</p>
             </div>
             <div className="bg-white rounded-xl border border-gray-100 px-5 py-3">
               <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">Recebido</p>
               <p className="text-lg font-bold text-green-600 mt-0.5">{formatBRL(totals.recebido)}</p>
+              <p className="text-[10px] text-gray-300 mt-0.5">{month === ALL_MONTHS ? "Todos os meses" : monthLabel(month)}</p>
             </div>
           </div>
 
