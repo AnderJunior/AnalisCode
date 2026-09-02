@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom'
-import { LayoutDashboard, LogOut, ChevronRight, Users, Layout, FileText } from 'lucide-react'
+import { LayoutDashboard, LogOut, ChevronRight, Users, Layout, FileText, Wallet } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext.jsx'
 import logoLetreiro from '../assets/logo-letreiro.png'
 
@@ -14,6 +14,7 @@ const NAV_SECTIONS = [
     label: 'Sites',
     items: [
       { label: 'Clientes',     icon: Users,    path: '/admin/clientes' },
+      { label: 'Financeiro',   icon: Wallet,   path: '/admin/financeiro' },
       { label: 'Formulários',  icon: FileText, path: '/admin/formularios' },
       { label: 'Templates',    icon: Layout,   path: '/admin/templates' },
     ],

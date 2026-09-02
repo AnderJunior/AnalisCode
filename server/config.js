@@ -2,6 +2,9 @@ const path = require('path');
 
 const isProduction = process.env.NODE_ENV === 'production';
 
+// Duracao da sessao do admin (padrao: 30 dias). Ajuste via SESSION_MAX_AGE_DAYS.
+const sessionMaxAgeDays = parseInt(process.env.SESSION_MAX_AGE_DAYS) || 30;
+
 module.exports = {
   db: {
     host: process.env.DB_HOST || 'localhost',
@@ -27,12 +30,13 @@ module.exports = {
   session: {
     secret: process.env.SESSION_SECRET || 'analiscode-secret-change-in-production',
     resave: false,
+    rolling: true, // renova o prazo do cookie a cada requisicao
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
       sameSite: 'lax',
       secure: isProduction,
-      maxAge: 24 * 60 * 60 * 1000, // 24h
+      maxAge: sessionMaxAgeDays * 24 * 60 * 60 * 1000,
     },
   },
 };

@@ -26,7 +26,22 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Session
-app.use(session(config.session));
+// Store persistente no MySQL — sem isto as sessões vivem só na memória do
+// processo e todo restart do servidor desloga todos os admins.
+const MySQLStore = require('express-mysql-session')(session);
+const sessionStore = new MySQLStore({
+  host: config.db.host,
+  user: config.db.user,
+  password: config.db.password,
+  database: config.db.database,
+  createDatabaseTable: true,
+  charset: 'utf8mb4_bin',
+  expiration: config.session.cookie.maxAge,
+  checkExpirationInterval: 15 * 60 * 1000, // limpa expiradas a cada 15min
+});
+sessionStore.on('error', (err) => console.error('Session store error:', err));
+
+app.use(session({ ...config.session, store: sessionStore }));
 
 // Static files
 app.use('/uploads', express.static(config.paths.uploads));
@@ -62,6 +77,12 @@ const { getDB } = require('./db');
     "ALTER TABLE clients MODIFY COLUMN template_id INT NULL DEFAULT NULL",
     "CREATE TABLE IF NOT EXISTS kanban_columns (id INT AUTO_INCREMENT PRIMARY KEY, `key` VARCHAR(100) UNIQUE NOT NULL, label VARCHAR(255) NOT NULL, color VARCHAR(20) DEFAULT '#6366f1', position INT DEFAULT 0, is_final BOOLEAN DEFAULT FALSE, role VARCHAR(50) DEFAULT NULL)",
     "ALTER TABLE kanban_columns ADD COLUMN role VARCHAR(50) DEFAULT NULL",
+    "ALTER TABLE clients ADD COLUMN deadline_days INT NULL DEFAULT NULL",
+    "ALTER TABLE clients ADD COLUMN deadline_date DATE NULL DEFAULT NULL",
+    "ALTER TABLE clients ADD COLUMN payment_status VARCHAR(50) DEFAULT 'pendente'",
+    "ALTER TABLE clients ADD COLUMN payment_amount DECIMAL(10,2) NULL DEFAULT NULL",
+    "ALTER TABLE clients ADD COLUMN payment_received_at DATE NULL DEFAULT NULL",
+    "ALTER TABLE clients ADD COLUMN payment_status_at DATETIME NULL DEFAULT NULL",
   ];
   for (const sql of migrations) {
     try { await db.execute(sql); } catch {}

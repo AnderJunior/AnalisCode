@@ -73,6 +73,22 @@ export async function updateStatus(id, status) {
   })
 }
 
+export async function updateClient(fields) {
+  if (!csrfToken) await getCSRF()
+  return request('/api/clients.php', {
+    method: 'POST',
+    body: JSON.stringify({ action: 'update_client', ...fields, csrf_token: csrfToken }),
+  })
+}
+
+export async function updatePayment(id, paymentStatus, paymentAmount) {
+  if (!csrfToken) await getCSRF()
+  const body = { action: 'update_payment', id, payment_status: paymentStatus, csrf_token: csrfToken }
+  // Só envia o valor quando há um — omitir preserva o valor já gravado.
+  if (paymentAmount !== undefined) body.payment_amount = paymentAmount
+  return request('/api/clients.php', { method: 'POST', body: JSON.stringify(body) })
+}
+
 export async function getFormSchema(token) {
   return request(`/api/form-schema.php?token=${token}`)
 }

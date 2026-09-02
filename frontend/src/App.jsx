@@ -5,6 +5,7 @@ import Login from './pages/admin/Login.jsx'
 import Dashboard from './pages/admin/Dashboard.jsx'
 import ClientDetail from './pages/admin/ClientDetail.jsx'
 import Clients from './pages/admin/Clients.jsx'
+import Financeiro from './pages/admin/Financeiro.jsx'
 import Templates from './pages/admin/Templates.jsx'
 import Workspace from './pages/admin/Workspace.jsx'
 import Forms from './pages/admin/Forms.jsx'
@@ -30,6 +31,10 @@ export default function App() {
           <Route
             path="/admin/clientes"
             element={<ProtectedRoute><Clients /></ProtectedRoute>}
+          />
+          <Route
+            path="/admin/financeiro"
+            element={<ProtectedRoute><Financeiro /></ProtectedRoute>}
           />
           <Route
             path="/admin/templates"

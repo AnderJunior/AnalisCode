@@ -5,6 +5,10 @@ const { getDB, generateToken } = require('../db');
 const { requireAdmin } = require('../middleware/auth');
 const { validateCSRF } = require('../middleware/csrf');
 const config = require('../config');
+const { addBusinessDays, toDateOnly } = require('../lib/businessDays');
+
+// Etapas do kanban financeiro — fixas, diferente do kanban de entrega.
+const PAYMENT_STATUSES = ['pendente', 'nf_enviada', 'recebido'];
 
 function copyDirSync(src, dest) {
   if (!fs.existsSync(dest)) fs.mkdirSync(dest, { recursive: true });
@@ -29,7 +33,7 @@ router.get('/', async (req, res) => {
 
   if (action === 'list') {
     const [clients] = await db.query(
-      'SELECT c.*, t.name as template_name, t.niche FROM clients c LEFT JOIN templates t ON c.template_id = t.id ORDER BY c.created_at DESC'
+      'SELECT c.*, t.name as template_name, t.niche, DATEDIFF(NOW(), COALESCE(c.payment_status_at, c.created_at)) AS days_in_payment_status FROM clients c LEFT JOIN templates t ON c.template_id = t.id ORDER BY c.created_at DESC'
     );
     const stats = {
       total: 0, formulario_pendente: 0, formulario_preenchido: 0, em_edicao: 0,
@@ -88,6 +92,9 @@ router.post('/', async (req, res) => {
     const phone = (req.body.phone || '').trim();
     const template_id = req.body.template_id ? parseInt(req.body.template_id) : null;
     const form_id = req.body.form_id ? parseInt(req.body.form_id) : null;
+    // Prazo em dias uteis — a data de entrega ja e gravada resolvida
+    const deadline_days = req.body.deadline_days ? parseInt(req.body.deadline_days) : null;
+    const deadline_date = deadline_days > 0 ? toDateOnly(addBusinessDays(new Date(), deadline_days)) : null;
 
     if (!name) return res.status(400).json({ error: 'Nome é obrigatório' });
 
@@ -95,8 +102,8 @@ router.post('/', async (req, res) => {
     const review_token = generateToken();
 
     const [result] = await db.execute(
-      'INSERT INTO clients (token, review_token, template_id, form_id, name, email, phone) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [token, review_token, template_id, form_id, name, email, phone]
+      'INSERT INTO clients (token, review_token, template_id, form_id, name, email, phone, deadline_days, deadline_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [token, review_token, template_id, form_id, name, email, phone, deadline_days, deadline_date]
     );
     const id = result.insertId;
 
@@ -135,6 +142,88 @@ router.post('/', async (req, res) => {
       "INSERT INTO revisions (client_id, type, message) VALUES (?, 'revision_request', ?)",
       [id, `Etapa mudada para ${colLabel}`]
     );
+    return res.json({ success: true });
+  }
+
+  if (action === 'update_client') {
+    const id = parseInt(req.body.id) || 0;
+    if (!id) return res.status(400).json({ error: 'ID inválido' });
+
+    const name = (req.body.name || '').trim();
+    if (!name) return res.status(400).json({ error: 'Nome é obrigatório' });
+
+    const email = (req.body.email || '').trim();
+    const phone = (req.body.phone || '').trim();
+
+    const deadline_days = req.body.deadline_days ? parseInt(req.body.deadline_days) : null;
+    const rawDate = req.body.deadline_date || null;
+    if (rawDate && !/^\d{4}-\d{2}-\d{2}$/.test(rawDate)) {
+      return res.status(400).json({ error: 'Data de prazo inválida' });
+    }
+    const deadline_date = rawDate;
+
+    // updated_at fica intocado de proposito: o kanban usa esse campo para
+    // contar ha quantos dias o cliente esta na etapa. Corrigir um telefone
+    // nao pode zerar esse contador.
+    await db.execute(
+      'UPDATE clients SET name = ?, email = ?, phone = ?, deadline_days = ?, deadline_date = ?, updated_at = updated_at WHERE id = ?',
+      [name, email, phone, deadline_days, deadline_date, id]
+    );
+
+    return res.json({ success: true });
+  }
+
+  if (action === 'update_payment') {
+    const id = parseInt(req.body.id) || 0;
+    if (!id) return res.status(400).json({ error: 'ID inválido' });
+
+    const payment_status = req.body.payment_status;
+    if (!PAYMENT_STATUSES.includes(payment_status)) {
+      return res.status(400).json({ error: 'Etapa financeira inválida' });
+    }
+
+    const [currentRows] = await db.execute('SELECT payment_status FROM clients WHERE id = ?', [id]);
+    if (!currentRows.length) return res.status(404).json({ error: 'Cliente não encontrado' });
+    const currentStatus = currentRows[0].payment_status || 'pendente';
+
+    const sets = ['payment_status = ?'];
+    const vals = [payment_status];
+
+    // So mexe no valor quando ele vem no corpo: arrastar de "NF Enviada" para
+    // "Recebido" nao pode apagar o valor ja informado.
+    if (req.body.payment_amount !== undefined) {
+      const raw = req.body.payment_amount;
+      let amount = null;
+      if (raw !== null && raw !== '') {
+        amount = Number(raw);
+        if (!Number.isFinite(amount) || amount < 0) {
+          return res.status(400).json({ error: 'Valor inválido' });
+        }
+      }
+      sets.push('payment_amount = ?');
+      vals.push(amount);
+    }
+
+    // Marco de entrada na etapa: so reinicia quando a etapa realmente muda,
+    // senao corrigir o valor zeraria o contador de dias na coluna.
+    if (payment_status !== currentStatus) {
+      sets.push('payment_status_at = NOW()');
+    }
+
+    // Data do recebimento: gravada na primeira vez que o card entra em
+    // "Recebido" e zerada se ele voltar — deixa de ser um ganho do mes.
+    if (payment_status === 'recebido') {
+      sets.push('payment_received_at = COALESCE(payment_received_at, CURDATE())');
+    } else {
+      sets.push('payment_received_at = NULL');
+    }
+
+    // updated_at preservado: o kanban de sites usa esse campo para contar
+    // dias na etapa, e mover o card no financeiro nao mexe naquele fluxo.
+    sets.push('updated_at = updated_at');
+    vals.push(id);
+
+    await db.execute(`UPDATE clients SET ${sets.join(', ')} WHERE id = ?`, vals);
     return res.json({ success: true });
   }
 

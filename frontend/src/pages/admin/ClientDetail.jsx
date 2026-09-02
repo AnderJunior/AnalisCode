@@ -4,10 +4,14 @@ import {
   ArrowLeft, ArrowRight, Copy, Check, ExternalLink, Clock, User, Mail, Phone,
   Layers, Link2, AlertCircle, Loader2, ChevronDown, ChevronUp,
   RefreshCw, MessageSquare, CheckCircle2, XCircle, FileText, Download,
-  Send, Upload, Globe, Edit3, Info, Eye
+  Send, Upload, Globe, Edit3, Info, Eye, CalendarClock, Pencil, X, Wallet
 } from 'lucide-react'
 import AdminLayout from '../../components/AdminLayout.jsx'
 import * as api from '../../services/api.js'
+import {
+  getDeadlineInfo, addBusinessDays, businessDaysUntil, parseDeadline, toISODate, DEADLINE_PRESETS,
+} from '../../utils/deadline.js'
+import { formatBRL } from '../../utils/currency.js'
 
 function flattenObject(obj, prefix = '') {
   return Object.entries(obj).reduce((acc, [key, val]) => {
@@ -237,7 +241,7 @@ function CopyButton({ text, label }) {
   )
 }
 
-function InfoRow({ icon: Icon, label, value }) {
+function InfoRow({ icon: Icon, label, value, valueClass = 'text-gray-800' }) {
   if (!value) return null
   return (
     <div className="flex items-start gap-3 py-3 border-b border-gray-50 last:border-0">
@@ -246,8 +250,206 @@ function InfoRow({ icon: Icon, label, value }) {
       </div>
       <div className="min-w-0">
         <p className="text-xs text-gray-400 font-medium uppercase tracking-wide">{label}</p>
-        <p className="text-sm text-gray-800 font-medium mt-0.5 break-words">{value}</p>
+        <p className={`text-sm font-medium mt-0.5 break-words ${valueClass}`}>{value}</p>
       </div>
+    </div>
+  )
+}
+
+// Prazo de entrega: data + quantos dias úteis faltam, colorido pela urgência.
+function DeadlineRow({ date }) {
+  const info = getDeadlineInfo(date)
+  if (!info) return null
+  return (
+    <InfoRow
+      icon={CalendarClock}
+      label="Prazo de entrega"
+      value={`${info.dateLabel} · ${info.label}`}
+      valueClass={info.tones.text}
+    />
+  )
+}
+
+// Edição das informações do cliente, prazo incluso.
+function EditClientModal({ client, onClose, onSaved }) {
+  const [name, setName] = useState(client?.name || '')
+  const [email, setEmail] = useState(client?.email || '')
+  const [phone, setPhone] = useState(client?.phone || '')
+  const [deadlineDate, setDeadlineDate] = useState(toISODate(client?.deadline_date))
+  const [deadlineDays, setDeadlineDays] = useState(client?.deadline_days ? String(client.deadline_days) : '')
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
+
+  // Os dias úteis contam a partir do cadastro — mesma base usada na criação,
+  // senão reabrir o modal empurraria o prazo para frente a cada edição.
+  const base = client?.created_at ? new Date(client.created_at) : new Date()
+
+  const applyDays = (value) => {
+    setDeadlineDays(value)
+    const n = parseInt(value)
+    setDeadlineDate(n > 0 ? toISODate(addBusinessDays(base, n)) : '')
+  }
+
+  const applyDate = (value) => {
+    setDeadlineDate(value)
+    const parsed = parseDeadline(value)
+    setDeadlineDays(parsed ? String(Math.max(0, businessDaysUntil(parsed, base))) : '')
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    if (!name.trim()) { setError('Nome é obrigatório'); return }
+    setError('')
+    setSaving(true)
+    const fields = {
+      name: name.trim(),
+      email: email.trim(),
+      phone: phone.trim(),
+      deadline_days: parseInt(deadlineDays) > 0 ? parseInt(deadlineDays) : null,
+      deadline_date: deadlineDate || null,
+    }
+    try {
+      await api.updateClient({ id: client.id, ...fields })
+      onSaved(fields)
+    } catch (err) {
+      setError(err.message || 'Erro ao salvar')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-lg animate-slide-up max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 bg-gray-100 rounded-lg flex items-center justify-center">
+              <Pencil className="w-3.5 h-3.5 text-gray-600" />
+            </div>
+            <h2 className="text-sm font-semibold text-gray-900">Editar Informações</h2>
+          </div>
+          <button onClick={onClose} className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          <div>
+            <label className="block text-xs font-medium text-gray-500 mb-1.5">Nome *</label>
+            <input type="text" value={name} onChange={(e) => setName(e.target.value)}
+              placeholder="Nome do cliente" className="input-field text-sm" disabled={saving} />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-500 mb-1.5">E-mail</label>
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
+              placeholder="email@exemplo.com" className="input-field text-sm" disabled={saving} />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-500 mb-1.5">Telefone</label>
+            <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)}
+              placeholder="(11) 99999-9999" className="input-field text-sm" disabled={saving} />
+          </div>
+
+          <div className="border-t border-gray-100 pt-4">
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="block text-xs font-medium text-gray-500">Prazo de entrega</label>
+              {(deadlineDate || deadlineDays) && (
+                <button type="button" onClick={() => { setDeadlineDate(''); setDeadlineDays('') }}
+                  disabled={saving}
+                  className="text-[11px] font-medium text-gray-400 hover:text-gray-600 transition-colors">
+                  remover prazo
+                </button>
+              )}
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <input type="number" min="0" value={deadlineDays}
+                  onChange={(e) => applyDays(e.target.value)}
+                  placeholder="Dias úteis" className="input-field text-sm" disabled={saving} />
+                <p className="text-[11px] text-gray-400 mt-1.5">Dias úteis desde o cadastro</p>
+              </div>
+              <div>
+                <input type="date" value={deadlineDate}
+                  onChange={(e) => applyDate(e.target.value)}
+                  className="input-field text-sm" disabled={saving} />
+                <p className="text-[11px] text-gray-400 mt-1.5">Data de entrega</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-1.5 mt-2.5">
+              {DEADLINE_PRESETS.map((n) => (
+                <button
+                  key={n}
+                  type="button"
+                  onClick={() => applyDays(String(n))}
+                  disabled={saving}
+                  className={`px-2.5 py-1 rounded-md text-[11px] font-medium border transition-all ${
+                    String(n) === String(deadlineDays)
+                      ? 'bg-primary-50 border-primary-300 text-primary-700'
+                      : 'bg-white border-gray-200 text-gray-500 hover:border-gray-300'
+                  }`}
+                >
+                  {n} dias
+                </button>
+              ))}
+            </div>
+            {deadlineDate && (
+              <p className="text-[11px] text-gray-500 mt-2.5">
+                {getDeadlineInfo(deadlineDate)?.label}
+              </p>
+            )}
+          </div>
+
+          {error && (
+            <div className="flex items-center gap-2 bg-red-50 border border-red-100 rounded-lg px-3 py-2.5">
+              <AlertCircle className="w-3.5 h-3.5 text-red-400 flex-shrink-0" />
+              <p className="text-red-600 text-xs">{error}</p>
+            </div>
+          )}
+
+          <div className="flex gap-2 pt-1">
+            <button type="button" onClick={onClose} className="btn-secondary flex-1 justify-center text-sm" disabled={saving}>
+              Cancelar
+            </button>
+            <button type="submit" className="btn-primary flex-1 justify-center text-sm" disabled={saving}>
+              {saving ? <><Loader2 className="w-3.5 h-3.5 animate-spin" />Salvando...</> : 'Salvar'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
+
+// Espelha as etapas do kanban financeiro (Financeiro.jsx).
+const PAYMENT_INFO = {
+  pendente:   { label: 'Pendente',   color: '#9ca3af', hint: 'Ainda não faturado' },
+  nf_enviada: { label: 'NF Enviada', color: '#f59e0b', hint: 'Nota fiscal enviada, aguardando pagamento' },
+  recebido:   { label: 'Recebido',   color: '#22c55e', hint: 'Pagamento recebido' },
+}
+
+function PaymentCard({ client }) {
+  const status = client?.payment_status || 'pendente'
+  const info = PAYMENT_INFO[status] || PAYMENT_INFO.pendente
+  const amount = formatBRL(client?.payment_amount)
+
+  return (
+    <div className="card">
+      <div className="flex items-center justify-between gap-2 mb-4">
+        <h3 className="font-semibold text-gray-900 flex items-center gap-2">
+          <Wallet className="w-4 h-4 text-gray-400" />
+          Financeiro
+        </h3>
+        <span className="inline-flex items-center gap-1.5 text-xs text-gray-600 flex-shrink-0">
+          <span className="w-2 h-2 rounded-full" style={{ backgroundColor: info.color }} />
+          {info.label}
+        </span>
+      </div>
+      {amount ? (
+        <p className="text-2xl font-bold text-gray-900">{amount}</p>
+      ) : (
+        <p className="text-base font-medium text-gray-300">Valor não informado</p>
+      )}
+      <p className="text-xs text-gray-400 mt-1">{info.hint}</p>
     </div>
   )
 }
@@ -971,6 +1173,7 @@ export default function ClientDetail() {
   const [statusUpdating, setStatusUpdating] = useState(false)
   const [statusSuccess, setStatusSuccess] = useState(false)
   const [activeTab, setActiveTab] = useState('info')
+  const [showEdit, setShowEdit] = useState(false)
 
   const fetchData = useCallback(async () => {
     try {
@@ -1126,8 +1329,17 @@ export default function ClientDetail() {
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
           <div className="lg:col-span-2 space-y-5">
             <div className="card">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold text-gray-900">Informações do Cliente</h3>
+              <div className="flex items-center justify-between gap-2 mb-4">
+                <div className="flex items-center gap-1 min-w-0">
+                  <h3 className="font-semibold text-gray-900">Informações do Cliente</h3>
+                  <button
+                    onClick={() => setShowEdit(true)}
+                    title="Editar informações"
+                    className="p-1.5 rounded-md text-gray-300 hover:text-gray-600 hover:bg-gray-100 transition-all flex-shrink-0"
+                  >
+                    <Pencil className="w-3.5 h-3.5" />
+                  </button>
+                </div>
                 <ClientStatusTags status={client?.status} formOpenedAt={client?.form_opened_at} hasFormData={client?.form_data && Object.keys(client.form_data).length > 0} />
               </div>
               <div>
@@ -1135,9 +1347,12 @@ export default function ClientDetail() {
                 <InfoRow icon={Mail} label="E-mail" value={client?.email} />
                 <InfoRow icon={Phone} label="Telefone" value={client?.phone} />
                 <InfoRow icon={Layers} label="Template" value={client?.template_name} />
+                <DeadlineRow date={client?.deadline_date} />
                 <InfoRow icon={Clock} label="Cadastrado em" value={formatDate(client?.created_at)} />
               </div>
             </div>
+
+            <PaymentCard client={client} />
 
             <FormSelector client={client} onUpdate={(formId) => setClient(prev => ({ ...prev, form_id: formId }))} />
 
@@ -1182,6 +1397,17 @@ export default function ClientDetail() {
 
       {/* TAB: Site Personalizado */}
       {activeTab === 'zip' && <ZipUploader client={client} revisions={revisions} />}
+
+      {showEdit && (
+        <EditClientModal
+          client={client}
+          onClose={() => setShowEdit(false)}
+          onSaved={(fields) => {
+            setClient((prev) => ({ ...prev, ...fields }))
+            setShowEdit(false)
+          }}
+        />
+      )}
     </AdminLayout>
   )
 }

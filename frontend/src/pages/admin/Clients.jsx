@@ -3,12 +3,13 @@ import { useNavigate } from 'react-router-dom'
 import {
   Users, Plus, X, Copy, Check, ChevronRight,
   Loader2, AlertCircle, UserPlus, Search, Trash2,
-  List, LayoutGrid, GripVertical, Clock, Eye, EyeOff,
+  List, LayoutGrid, GripVertical, Clock, Eye, EyeOff, CalendarClock,
   Settings, Pencil, Palette
 } from 'lucide-react'
 import { DndContext, DragOverlay, useDraggable, useDroppable, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
 import AdminLayout from '../../components/AdminLayout.jsx'
 import * as api from '../../services/api.js'
+import { DEADLINE_PRESETS, addBusinessDays, formatDeadlineDate, getDeadlineInfo } from '../../utils/deadline.js'
 
 const STATUS_CONFIG = {
   formulario_pendente:   { label: 'Formulário Pendente',   dot: 'bg-gray-400' },
@@ -46,6 +47,23 @@ function getDaysInStage(createdAt) {
   if (!createdAt) return 0
   const diff = Date.now() - new Date(createdAt).getTime()
   return Math.max(0, Math.floor(diff / (1000 * 60 * 60 * 24)))
+}
+
+// Data do prazo + quantos dias úteis faltam, colorido pela urgência.
+function DeadlineBadge({ date, block = false, className = '' }) {
+  const info = getDeadlineInfo(date)
+  if (!info) return null
+  return (
+    <span
+      className={`${block ? 'flex' : 'inline-flex'} items-center gap-1.5 px-2 py-1 rounded-md ${info.tones.bg} ${className}`}
+      title={`Prazo: ${info.dateLabel} (dias úteis)`}
+    >
+      <CalendarClock className={`w-3 h-3 flex-shrink-0 ${info.tones.text}`} />
+      <span className={`text-[10px] font-medium ${info.tones.text}`}>
+        {info.dateLabel} · {info.label}
+      </span>
+    </span>
+  )
 }
 
 // ---- Kanban Components ----
@@ -91,6 +109,7 @@ function KanbanCard({ client, onClick }) {
           <span className="text-[10px] text-gray-400 font-medium">Não abriu o link</span>
         </div>
       )}
+      <DeadlineBadge date={client.deadline_date} block className="mt-2" />
       <div className="flex items-center justify-between mt-3 pt-2.5 border-t border-gray-50">
         <span className="text-[10px] text-gray-400 font-medium">{client.template_name || '—'}</span>
         <span className="inline-flex items-center gap-1 text-[10px] text-gray-400">
@@ -108,6 +127,7 @@ function KanbanCardOverlay({ client }) {
     <div className="bg-white rounded-xl border-2 border-primary-300 shadow-2xl p-3.5 w-[250px] rotate-2">
       <p className="text-sm font-semibold text-gray-900 truncate">{client.name}</p>
       {client.email && <p className="text-xs text-gray-400 truncate mt-0.5">{client.email}</p>}
+      <DeadlineBadge date={client.deadline_date} block className="mt-2" />
       <div className="flex items-center justify-between mt-3 pt-2.5 border-t border-gray-50">
         <span className="text-[10px] text-gray-400 font-medium">{client.template_name || '—'}</span>
         <span className="inline-flex items-center gap-1 text-[10px] text-gray-400">
@@ -434,6 +454,7 @@ export function CreateClientModal({ onClose, onSuccess }) {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
+  const [deadlineDays, setDeadlineDays] = useState('10')
   const [templateId, setTemplateId] = useState('')
   const [templates, setTemplates] = useState([])
   const [forms, setForms] = useState([])
@@ -442,6 +463,10 @@ export function CreateClientModal({ onClose, onSuccess }) {
   const [templatesLoading, setTemplatesLoading] = useState(true)
   const [error, setError] = useState('')
   const [custom, setCustom] = useState(false)
+
+  const deadlinePreview = parseInt(deadlineDays) > 0
+    ? formatDeadlineDate(addBusinessDays(new Date(), deadlineDays))
+    : null
 
   useEffect(() => {
     api.getTemplates()
@@ -464,6 +489,7 @@ export function CreateClientModal({ onClose, onSuccess }) {
       const payload = { name, email, phone }
       if (!custom) payload.template_id = parseInt(templateId)
       if (formId) payload.form_id = parseInt(formId)
+      if (parseInt(deadlineDays) > 0) payload.deadline_days = parseInt(deadlineDays)
       const data = await api.createClient(payload)
       onSuccess(data.client)
     } catch (err) {
@@ -499,10 +525,48 @@ export function CreateClientModal({ onClose, onSuccess }) {
             <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
               placeholder="email@exemplo.com" className="input-field text-sm" disabled={loading} />
           </div>
-          <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1.5">Telefone</label>
-            <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)}
-              placeholder="(11) 99999-9999" className="input-field text-sm" disabled={loading} />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-medium text-gray-500 mb-1.5">Telefone</label>
+              <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)}
+                placeholder="(11) 99999-9999" className="input-field text-sm" disabled={loading} />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-500 mb-1.5">Prazo (dias úteis)</label>
+              <input type="number" min="0" value={deadlineDays}
+                onChange={(e) => setDeadlineDays(e.target.value)}
+                placeholder="Sem prazo" className="input-field text-sm" disabled={loading} />
+              <div className="flex items-center gap-1.5 mt-2">
+                {DEADLINE_PRESETS.map((n) => (
+                  <button
+                    key={n}
+                    type="button"
+                    onClick={() => setDeadlineDays(String(n))}
+                    disabled={loading}
+                    className={`px-2.5 py-1 rounded-md text-[11px] font-medium border transition-all ${
+                      String(n) === String(deadlineDays)
+                        ? 'bg-primary-50 border-primary-300 text-primary-700'
+                        : 'bg-white border-gray-200 text-gray-500 hover:border-gray-300'
+                    }`}
+                  >
+                    {n}
+                  </button>
+                ))}
+                {deadlineDays !== '' && (
+                  <button
+                    type="button"
+                    onClick={() => setDeadlineDays('')}
+                    disabled={loading}
+                    className="px-2 py-1 rounded-md text-[11px] font-medium text-gray-400 hover:text-gray-600 transition-colors"
+                  >
+                    limpar
+                  </button>
+                )}
+              </div>
+              <p className="text-[11px] text-gray-400 mt-1.5 h-4">
+                {deadlinePreview ? `Entrega em ${deadlinePreview}` : 'Sem prazo definido'}
+              </p>
+            </div>
           </div>
           <div>
             <label className="block text-xs font-medium text-gray-500 mb-1.5">Formulário</label>
@@ -728,6 +792,7 @@ export default function Clients() {
                 <th className="px-6 py-3 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Nome</th>
                 <th className="px-6 py-3 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Status</th>
                 <th className="px-6 py-3 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Template</th>
+                <th className="px-6 py-3 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Prazo</th>
                 <th className="px-6 py-3 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Link</th>
                 <th className="px-6 py-3 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Criado em</th>
                 <th className="px-6 py-3 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Ações</th>
@@ -750,6 +815,11 @@ export default function Clients() {
                   <td className="px-6 py-3.5">
                     <p className="text-sm text-gray-500">{client.template_name || '—'}</p>
                     {client.niche && <p className="text-xs text-gray-400 mt-0.5">{client.niche}</p>}
+                  </td>
+                  <td className="px-6 py-3.5">
+                    {client.deadline_date
+                      ? <DeadlineBadge date={client.deadline_date} />
+                      : <span className="text-sm text-gray-300">—</span>}
                   </td>
                   <td className="px-6 py-3.5">
                     {client.form_opened_at ? (
