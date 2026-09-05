@@ -35,6 +35,18 @@ function receivedMonth(client) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
 }
 
+// O financeiro só recebe o cliente quando ele chega na coluna final do
+// kanban de clientes ("Finalizado"). Quem já tem movimento financeiro
+// continua aparecendo mesmo que volte para uma etapa anterior: um valor
+// já recebido não pode sumir do total do mês por causa de um ajuste.
+// Sem coluna final configurada, mostra todos em vez de esvaziar o quadro.
+function isInFinance(client, finalKey) {
+  if (!finalKey) return true
+  if (client.status === finalKey) return true
+  const status = client.payment_status || 'pendente'
+  return status !== 'pendente' || client.payment_amount !== null && client.payment_amount !== undefined
+}
+
 function currentMonth() {
   const now = new Date()
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
@@ -386,6 +398,7 @@ function AmountModal({ client, targetColumn, onCancel, onConfirm }) {
 export default function Financeiro() {
   const navigate = useNavigate()
   const [clients, setClients] = useState([])
+  const [finalKey, setFinalKey] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [month, setMonth] = useState(currentMonth())
@@ -400,8 +413,14 @@ export default function Financeiro() {
     setLoading(true)
     setError('')
     try {
-      const data = await api.getClients()
+      const [data, columns] = await Promise.all([
+        api.getClients(),
+        api.getKanbanColumns().catch(() => []),
+      ])
       setClients(data.clients || [])
+      // Coluna final do kanban de clientes ("Finalizado").
+      const final = (columns || []).find((c) => c.is_final) || (columns || []).find((c) => c.role === 'finished')
+      setFinalKey(final?.key || null)
     } catch (err) {
       setError(err.message || 'Erro ao carregar clientes')
     } finally {
@@ -415,14 +434,17 @@ export default function Financeiro() {
 
   // Só os recebidos têm mês. O mês atual entra sempre na lista, mesmo vazio,
   // senão a seleção padrão apontaria para uma opção inexistente.
+  // Universo do financeiro: clientes finalizados, mais os que ja tem movimento.
+  const eligible = clients.filter((c) => isInFinance(c, finalKey))
+
   const monthOptions = [...new Set([
     currentMonth(),
-    ...clients.filter((c) => c.payment_status === 'recebido').map(receivedMonth).filter(Boolean),
+    ...eligible.filter((c) => c.payment_status === 'recebido').map(receivedMonth).filter(Boolean),
   ])].sort().reverse()
 
   const grouped = {}
   PAYMENT_COLUMNS.forEach((col) => { grouped[col.key] = [] })
-  clients.forEach((client) => {
+  eligible.forEach((client) => {
     const key = client.payment_status || 'pendente'
     if (key === 'recebido') {
       // Único grupo que o mês filtra.
