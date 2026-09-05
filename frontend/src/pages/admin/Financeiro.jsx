@@ -102,7 +102,13 @@ function FinanceCard({ client, onOpenClient, onEditAmount }) {
     <div
       ref={setNodeRef}
       style={style}
-      className={`bg-white rounded-xl border border-gray-100 shadow-sm p-3.5 cursor-grab active:cursor-grabbing transition-shadow hover:shadow-md group ${
+      // Sem select-none/touch-none e draggable=false, arrastar com um mouse
+      // real seleciona o texto do card e pode iniciar o drag nativo do
+      // navegador. O input do popup até recebe foco, mas o navegador segue
+      // nesse estado e engole as teclas até um clique de verdade.
+      draggable={false}
+      onDragStart={(e) => e.preventDefault()}
+      className={`select-none touch-none bg-white rounded-xl border border-gray-100 shadow-sm p-3.5 cursor-grab active:cursor-grabbing transition-shadow hover:shadow-md group ${
         isDragging ? 'opacity-50 shadow-lg ring-2 ring-primary-200' : ''
       }`}
       {...listeners}
@@ -302,11 +308,13 @@ function AmountModal({ client, targetColumn, onCancel, onConfirm }) {
   const [error, setError] = useState('')
   const inputRef = useRef(null)
 
-  // O autoFocus do JSX perde a corrida: ao terminar o arraste o dnd-kit
-  // devolve o foco ao card. O rAF coloca o foco depois disso, e o select
-  // deixa o valor existente pronto para ser substituido.
+  // Foco no input assim que o popup abre. O autoFocus do JSX sozinho nao
+  // basta quando o popup nasce do fim de um arraste, entao: descarta a
+  // selecao que o arraste possa ter deixado na pagina, e so entao foca no
+  // quadro seguinte. O select deixa um valor existente pronto para troca.
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
+      try { window.getSelection()?.removeAllRanges() } catch {}
       inputRef.current?.focus()
       inputRef.current?.select()
     })
